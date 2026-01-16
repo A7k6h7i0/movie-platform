@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+  
+  body {
+    @apply bg-primary-dark text-white font-sans antialiased;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-primary-dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
+  }
+
+  /* Force full opacity on all headings */
+  h1, h2, h3, h4, h5, h6 {
+    opacity: 1 !important;
+    color: #FFFFFF !important;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply bg-white/10 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 backdrop-blur-sm;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer;
+  }
+
+  .skeleton {
+    @apply animate-pulse bg-gray-700/50 rounded;
+  }
+
+  .section-title {
+    @apply text-3xl font-bold mb-6;
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+  }
+
+  .gradient-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-primary-dark via-primary-dark/80 to-transparent;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Netflix-style Hover Preview Styles */
+.hover-preview-container {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.hover-preview-video {
+  aspect-ratio: 16/9;
+  width: 100%;
+  background: #000;
+}
+
+.hover-preview-video iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Smooth transitions for hover preview */
+.hover-preview-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.hover-preview-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+.hover-preview-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hover-preview-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 150ms ease-in, transform 150ms ease-in;
+}
+
+/* Netflix-style action buttons */
+.preview-action-btn {
+  @apply flex items-center justify-center rounded-full transition-all duration-200;
+}
+
+.preview-action-btn-primary {
+  @apply bg-white hover:bg-gray-200;
+}
+
+.preview-action-btn-secondary {
+  @apply border-2 border-gray-500 hover:border-white bg-transparent;
+}
+
+/* Match percentage color based on value */
+.match-high {
+  color: #46d369;
+}
+
+.match-medium {
+  color: #f5c518;
+}
+
+.match-low {
+  color: #d2d2d2;
+}

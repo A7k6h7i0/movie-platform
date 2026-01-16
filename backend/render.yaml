@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: movie-platform-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false
+      - key: TMDB_API_KEY
+        sync: false
+      - key: TMDB_BASE_URL
+        value: https://api.themoviedb.org/3
+      - key: CORS_ORIGIN
+        sync: false
