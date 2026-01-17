@@ -1,249 +1,163 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion, Reorder } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
-import { FiEdit2, FiCheck, FiX } from 'react-icons/fi';
-import { OTT_PLATFORMS, DEFAULT_OTT_ORDER, getOTTPlatformUrl } from '../../utils/constants';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import {
+  OTT_PLATFORMS,
+  DEFAULT_OTT_ORDER,
+  getOTTPlatformUrl
+} from '../../utils/constants';
 
-const OTT_ORDER_STORAGE_KEY = 'ott_platform_order';
+const STORAGE_KEY = 'ott_platform_order';
+const LONG_PRESS_MS = 500;
 
-const OTTGrid = ({ title = 'Streaming Platforms', showEditButton = true }) => {
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [platformOrder, setPlatformOrder] = useState([]);
-  const [originalOrder, setOriginalOrder] = useState([]);
+const OTTGrid = ({ title = 'Streaming Platforms' }) => {
+  const [order, setOrder] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const pressTimer = useRef(null);
+  const containerRef = useRef(null);
 
-  // Load saved order from localStorage or use default
   useEffect(() => {
-    const savedOrder = localStorage.getItem(OTT_ORDER_STORAGE_KEY);
-    if (savedOrder) {
-      try {
-        const parsed = JSON.parse(savedOrder).map(Number);
-        // Validate that all IDs exist in OTT_PLATFORMS
-        const validOrder = parsed.filter(id => OTT_PLATFORMS[id]);
-        // Add any new platforms that weren't in saved order
-        const allIds = Object.keys(OTT_PLATFORMS).map(Number);
-        const missingIds = allIds.filter(id => !validOrder.includes(id));
-        setPlatformOrder([...validOrder, ...missingIds]);
-      } catch {
-        setPlatformOrder(DEFAULT_OTT_ORDER);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setOrder(JSON.parse(saved));
+    else setOrder(DEFAULT_OTT_ORDER);
+  }, []);
+
+  useEffect(() => {
+    const handleOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setEditMode(false);
       }
-    } else {
-      // Use all platforms if no saved order
-      const allIds = Object.keys(OTT_PLATFORMS).map(Number);
-      setPlatformOrder(allIds);
-    }
+    };
+
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('touchstart', handleOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('touchstart', handleOutside);
+    };
   }, []);
 
-  // Save order to localStorage
-  const saveOrder = useCallback((order) => {
-    localStorage.setItem(OTT_ORDER_STORAGE_KEY, JSON.stringify(order));
-  }, []);
-
-  // Handle entering edit mode
-  const handleEditClick = () => {
-    setOriginalOrder([...platformOrder]);
-    setIsEditMode(true);
+  const saveOrder = (o) => {
+    setOrder(o);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(o));
+    setEditMode(false);
   };
 
-  // Handle saving changes
-  const handleSaveClick = () => {
-    saveOrder(platformOrder);
-    setIsEditMode(false);
+  const handlePressStart = () => {
+    pressTimer.current = setTimeout(() => {
+      setEditMode(true);
+    }, LONG_PRESS_MS);
   };
 
-  // Handle canceling changes
-  const handleCancelClick = () => {
-    setPlatformOrder(originalOrder);
-    setIsEditMode(false);
+  const handlePressEnd = () => {
+    clearTimeout(pressTimer.current);
   };
 
-  // Handle reorder
-  const handleReorder = (newOrder) => {
-  setPlatformOrder(newOrder.map(Number));
-};
-
-
-  // Handle platform click
-  const handlePlatformClick = (platformId) => {
-    if (isEditMode) return; // Don't navigate in edit mode
-    
-    const platform = OTT_PLATFORMS[platformId];
-    const url = getOTTPlatformUrl(platformId, platform?.name);
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
+  const handleClick = (id) => {
+    if (editMode) return;
+    const url = getOTTPlatformUrl(id, OTT_PLATFORMS[id]?.name);
+    if (url) window.open(url, '_blank');
   };
-
-  const IMAGE_PROXY = 'https://images.weserv.nl/?url=';
 
   return (
-    <div className="w-full">
-      {/* Header with title and edit button */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-white">{title}</h2>
-        {showEditButton && (
-          <div className="flex items-center gap-2">
-            {isEditMode ? (
-              <>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleSaveClick}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
-                >
-                  <FiCheck size={16} />
-                  <span>Save</span>
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleCancelClick}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors"
-                >
-                  <FiX size={16} />
-                  <span>Cancel</span>
-                </motion.button>
-              </>
-            ) : (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleEditClick}
-                className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
-              >
-                <FiEdit2 size={16} />
-                <span>Edit</span>
-              </motion.button>
-            )}
-          </div>
-        )}
-      </div>
+    <section ref={containerRef} className="w-full">
+      <h2 className="text-xl font-bold text-white mb-8">{title}</h2>
 
-      {/* Edit mode instruction */}
-      {isEditMode && (
-        <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-gray-400 text-sm mb-4"
-        >
-          Drag and drop to reorder your favorite platforms
-        </motion.p>
-      )}
+      <Reorder.Group
+  axis="x"
+  values={order}
+  onReorder={saveOrder}
+  className="
+    flex gap-3
+    overflow-x-auto
+    pb-6 pt-4
+    scrollbar-hide
+    relative
+  "
+>
 
-      {/* OTT Grid */}
-      {isEditMode ? (
-        <Reorder.Group
-          axis="x"
-          values={platformOrder.map(Number)}
-          onReorder={handleReorder}
-          className="flex gap-3 overflow-x-auto pb-2"
-        >
-          {platformOrder.map((platformId) => {
-            const platform = OTT_PLATFORMS[platformId];
-            if (!platform) return null;
+        {order.map((id) => {
+          const p = OTT_PLATFORMS[id];
+          if (!p) return null;
 
-            const logoUrl = platform.logoUrl
-              ? `${IMAGE_PROXY}${encodeURIComponent(platform.logoUrl)}`
-              : null;
+          return (
+            <Reorder.Item
+              key={id}
+              value={id}
+              drag={editMode}
+              className="flex-shrink-0"
+            >
+           <motion.div
+  onMouseDown={handlePressStart}
+  onMouseUp={handlePressEnd}
+  onMouseLeave={handlePressEnd}
+  onTouchStart={handlePressStart}
+  onTouchEnd={handlePressEnd}
+  onClick={() => handleClick(id)}
+  whileHover={
+    !editMode
+      ? {
+          scale: 1.12,
+          boxShadow: '0 0 0 2px rgba(255,255,255,0.35), 0 8px 24px rgba(0,0,0,0.6)'
+        }
+      : {}
+  }
+  transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+  className={`
+    relative
+    flex-shrink-0
+    w-[56px] h-[56px]
+    flex items-center justify-center
+    rounded-md
+    cursor-pointer
+    ${editMode ? 'ring-2 ring-blue-400' : ''}
+  `}
+>
 
-            return (
-              <Reorder.Item
-                key={platformId}
-                value={platformId}
-                className="cursor-grab active:cursor-grabbing flex-shrink-0"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: platform.color }}
-                >
-                  {logoUrl ? (
-                    <img
-                      src={logoUrl}
-                      alt={platform.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                  <div
-                    className={`absolute inset-0 flex flex-col items-center justify-center ${logoUrl ? 'hidden' : 'flex'}`}
-                    style={{ backgroundColor: platform.color }}
-                  >
-                    <span className="text-3xl">{platform.logo}</span>
-                    <span className="text-white text-[10px] font-medium mt-1 px-1 text-center line-clamp-1">
-                      {platform.name.split(' ')[0]}
-                    </span>
-                  </div>
-                  {/* Drag indicator */}
-                  <div className="absolute top-1 right-1 w-5 h-5 bg-black/50 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs">⋮⋮</span>
-                  </div>
-                </motion.div>
-              </Reorder.Item>
-            );
-          })}
-        </Reorder.Group>
-      ) : (
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {platformOrder.map((platformId) => {
-            const platform = OTT_PLATFORMS[platformId];
-            if (!platform) return null;
+                {/* OTT LOGO */}
+               {p.logoUrl ? (
+  <img
+    src={p.logoUrl}
+    alt={p.name}
+    className="
+      w-full h-full
+      object-contain
+      select-none
+    "
+    loading="lazy"
+    draggable={false}
+  />
+) : (
+  <span className="text-white text-xs font-medium">
+    {p.name}
+  </span>
+)}
 
-            const logoUrl = platform.logoUrl
-              ? `${IMAGE_PROXY}${encodeURIComponent(platform.logoUrl)}`
-              : null;
 
-            return (
-              <motion.div
-                key={platformId}
-                whileHover={{ scale: 1.08, y: -4 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handlePlatformClick(platformId)}
-                className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden cursor-pointer shadow-lg hover:shadow-xl transition-shadow flex-shrink-0"
-                style={{ backgroundColor: platform.color }}
-                title={`Watch on ${platform.name}`}
-              >
-                {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt={platform.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                <div
-                  className={`absolute inset-0 flex flex-col items-center justify-center ${logoUrl ? 'hidden' : 'flex'}`}
-                  style={{ backgroundColor: platform.color }}
-                >
-                  <span className="text-3xl sm:text-4xl">{platform.logo}</span>
-                  <span className="text-white text-[10px] sm:text-xs font-semibold mt-1 px-1 text-center line-clamp-1 drop-shadow-md">
-                    {platform.name.length > 10 ? platform.name.split(' ')[0] : platform.name}
-                  </span>
-                </div>
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
-                  <span className="text-white text-xs font-medium bg-black/60 px-2 py-1 rounded">
-                    Open
-                  </span>
-                </div>
+                {/* EDIT MODE ARROWS */}
+                {editMode && (
+                  <>
+                    <div className="absolute -left-2 top-1/2 -translate-y-1/2 bg-black/70 p-1 rounded-full">
+                      <FiChevronLeft size={14} />
+                    </div>
+                    <div className="absolute -right-2 top-1/2 -translate-y-1/2 bg-black/70 p-1 rounded-full">
+                      <FiChevronRight size={14} />
+                    </div>
+                  </>
+                )}
               </motion.div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+            </Reorder.Item>
+          );
+        })}
+      </Reorder.Group>
+    </section>
   );
 };
 
 OTTGrid.propTypes = {
-  title: PropTypes.string,
-  showEditButton: PropTypes.bool,
+  title: PropTypes.string
 };
 
 export default OTTGrid;

@@ -33,7 +33,7 @@ export const OTT_PLATFORMS = {
     logo: '🌟', 
     color: '#1F80E0', 
     url: 'https://www.hotstar.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1f/Disney%2B_Hotstar_logo.svg',
+    logoUrl: 'https://preview.redd.it/jio-hotstar-logo-v0-3qwk3idmh2je1.jpeg?width=640&crop=smart&auto=webp&s=092402d6c39d5525a0c75839e642dd98c07727ea',
     category: 'major'
   },
   // Amazon Prime Video
@@ -42,7 +42,7 @@ export const OTT_PLATFORMS = {
     logo: '📺', 
     color: '#00A8E1', 
     url: 'https://www.primevideo.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Prime_Video_Logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWvblk6EN1xGc4TlcyP6nadLGnb3h1fmy-Iw&s',
     category: 'major'
   },
   // Netflix
@@ -60,7 +60,7 @@ export const OTT_PLATFORMS = {
     logo: '🎥', 
     color: '#E91E63', 
     url: 'https://www.jiocinema.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/JioCinema_logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqVDAvFgp_JjSmSA-QxCBFE8QRTarByrNRuw&s',
     category: 'major'
   },
   // Sony LIV
@@ -69,7 +69,7 @@ export const OTT_PLATFORMS = {
     logo: '📺', 
     color: '#000000', 
     url: 'https://www.sonyliv.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/14/SonyLIV_logo.svg',
+    logoUrl: 'https://play-lh.googleusercontent.com/_FGpN1UYjPgfL1t3TSybSllUdlzoLTUlLx36UUUpPm8W3-w37SNd1ZNfJbwKzwPyJ3w',
     category: 'major'
   },
   // Zee5
@@ -78,7 +78,7 @@ export const OTT_PLATFORMS = {
     logo: '📺', 
     color: '#8230C6', 
     url: 'https://www.zee5.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/98/ZEE5_logo.svg',
+    logoUrl: 'https://play-lh.googleusercontent.com/hTyywmiwIURzSWU1GD_dG9rMDCMPC0jCL1SRzm6gxjo0SUZuaFkUerN0kIkzCjZTn7w',
     category: 'major'
   },
   // MX Player
@@ -87,7 +87,7 @@ export const OTT_PLATFORMS = {
     logo: '▶️', 
     color: '#0D47A1', 
     url: 'https://www.mxplayer.in',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/76/MX_Player_logo.svg',
+    logoUrl: 'https://play-lh.googleusercontent.com/fTp32YyE-fi7cdG4V6dDR5OCLsx5bRhgMuCQLXroevnHiZWRY72Cxcseb6vlznTEDQ',
     category: 'major'
   },
   // Voot (now merged into JioCinema)
@@ -96,7 +96,7 @@ export const OTT_PLATFORMS = {
     logo: '🎥', 
     color: '#FF5722', 
     url: 'https://www.jiocinema.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Voot_2016_logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKU7dvflIZGiTrBxfhgQmCEd65-8TPmnKCeQ&s',
     category: 'major'
   },
   // ALTBalaji
@@ -105,7 +105,7 @@ export const OTT_PLATFORMS = {
     logo: '🎭', 
     color: '#D32F2F', 
     url: 'https://www.altbalaji.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/ALTBalaji_logo.svg',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/archive/8/86/20250708173245%21Altbalaji_Logo.svg',
     category: 'major'
   },
   // Discovery+
@@ -114,7 +114,7 @@ export const OTT_PLATFORMS = {
     logo: '🌍', 
     color: '#003366', 
     url: 'https://www.discoveryplus.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Discovery%2B_logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTENF_zWbdRayqZJd74w-uo8E6LWjCR_udnUw&s',
     category: 'major'
   },
   // Apple TV+
@@ -123,7 +123,7 @@ export const OTT_PLATFORMS = {
     logo: '🍎', 
     color: '#000000', 
     url: 'https://tv.apple.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1f/Apple_TV%2B_logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROP-Z1j6_Iq8KzU3cgR2fGyPA2um7WBrRcNQ&s',
     category: 'major'
   },
   // Lionsgate Play
@@ -132,7 +132,7 @@ export const OTT_PLATFORMS = {
     logo: '🦁', 
     color: '#FF6B00', 
     url: 'https://www.lionsgateplay.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Lionsgate_logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4JzVp-AX_utXZt1zZh7lYd9Iv7NLP5huh1Q&s',
     category: 'major'
   },
   // ShemarooMe
@@ -141,7 +141,7 @@ export const OTT_PLATFORMS = {
     logo: '🎬', 
     color: '#FF0000', 
     url: 'https://www.shemaroome.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/90/ShemarooMe_logo.svg',
+    logoUrl: 'https://play-lh.googleusercontent.com/jsKvz1IusNT_zgpu_zCZ5qNkN7W0e17MPfHWcExm8Vfh1RVtXIuzErBt-EY1dginycem',
     category: 'major'
   },
   // Eros Now
@@ -150,7 +150,7 @@ export const OTT_PLATFORMS = {
     logo: '💕', 
     color: '#E91E63', 
     url: 'https://erosnow.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Eros_Now_logo.svg',
+    logoUrl: 'https://play-lh.googleusercontent.com/SMlVlmn--w2tTPtk6kL2Y6vTgXhuO-sqi2Yzr9WzljMdBX5AER9OAnnwXv_vWkaA4A=w240-h480-rw',
     category: 'major'
   },
 
@@ -161,7 +161,7 @@ export const OTT_PLATFORMS = {
     logo: '🎬', 
     color: '#FF6F00', 
     url: 'https://www.aha.video',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/35/Aha_OTT_Logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRd4YWu0YpgPUe7OVnXjHJdTG4vWTz0vJlvg&s',
     category: 'telugu'
   },
   // ETV Win
@@ -170,7 +170,7 @@ export const OTT_PLATFORMS = {
     logo: '📺', 
     color: '#FF5722', 
     url: 'https://www.etvwin.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjyn1Rz92RlLB7HW8Z5XRtwVn6gFCU26aFlA&s',
     category: 'telugu'
   },
   // iBOMMA
@@ -179,7 +179,7 @@ export const OTT_PLATFORMS = {
     logo: '🎥', 
     color: '#4CAF50', 
     url: 'https://www.ibomma.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz16P33MdtxjUVSFbyGR3qk5BylV9o4SvF1g&s',
     category: 'telugu'
   },
   // Neestream
@@ -188,7 +188,7 @@ export const OTT_PLATFORMS = {
     logo: '🌊', 
     color: '#2196F3', 
     url: 'https://www.neestream.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTN296coWSjnXjw9HVPqylyY2v0rUtBtPdHBQ&s',
     category: 'telugu'
   },
   // Aha Gold
@@ -197,7 +197,7 @@ export const OTT_PLATFORMS = {
     logo: '🏆', 
     color: '#FFD700', 
     url: 'https://www.aha.video',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC1R9G9MyqT1-l18IFiUi668RDLqV3niATPQ&s',
     category: 'telugu'
   },
   // First Shows
@@ -206,7 +206,7 @@ export const OTT_PLATFORMS = {
     logo: '🎬', 
     color: '#9C27B0', 
     url: 'https://www.firstshows.com',
-    logoUrl: null,
+    logoUrl: 'https://play-lh.googleusercontent.com/AHSv7iRO5GxhAlnIdPFKorz6L7VRTDx-8fJmKogKiEw0pL9ajCXq8ZIwFdgKg96iSaA=w240-h480-rw',
     category: 'telugu'
   },
   // Chitram TV OTT
@@ -215,7 +215,7 @@ export const OTT_PLATFORMS = {
     logo: '📺', 
     color: '#E91E63', 
     url: 'https://www.chitramtv.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEePtuA16gLpt45F3jflNhCaLTb0GQvzXZqw&s',
     category: 'telugu'
   },
 
@@ -226,7 +226,7 @@ export const OTT_PLATFORMS = {
     logo: '☀️', 
     color: '#FFC107', 
     url: 'https://www.sunnxt.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Sun_NXT_Logo.svg',
+    logoUrl: 'https://play-lh.googleusercontent.com/jFi2iC10wQJ42gu-DO2CMeIcN3qcmNQHtY5EBT_wtp4jCIozS4n3Q9pA7ZloDUGHHw=w240-h480-rw',
     category: 'tamil'
   },
   // Tentkotta
@@ -235,7 +235,7 @@ export const OTT_PLATFORMS = {
     logo: '🎪', 
     color: '#FF5722', 
     url: 'https://www.tentkotta.com',
-    logoUrl: null,
+    logoUrl: 'https://play-lh.googleusercontent.com/h7zhk6JI9hphUt_D0PgkjgLad5cT6yqo80ADB_YvWCaOxzAMxyu2D8OlAECkMzr7e1U',
     category: 'tamil'
   },
   // Simply South
@@ -244,7 +244,7 @@ export const OTT_PLATFORMS = {
     logo: '🌴', 
     color: '#4CAF50', 
     url: 'https://www.simplysouth.tv',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Simply_South_logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSg28s3czOAWbso-1Ho-P3T9YjRdfKrJOh65Q&s',
     category: 'tamil'
   },
   // Raj Digital Plus
@@ -253,7 +253,7 @@ export const OTT_PLATFORMS = {
     logo: '👑', 
     color: '#9C27B0', 
     url: 'https://www.rajdigitalplus.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Raj_Digital_Plus_logo.png',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhjxjIWKaeBssGlzNsklxwYYtKwvmWafUYrA&s',
     category: 'tamil'
   },
   // Movie Saints
@@ -262,7 +262,7 @@ export const OTT_PLATFORMS = {
     logo: '🎬', 
     color: '#3F51B5', 
     url: 'https://www.moviesaints.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/MovieSaints_logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGtli9QKl-SRjmlFt-SyzHzwIigMHlyr1-Ng&s',
     category: 'tamil'
   },
 
@@ -273,7 +273,7 @@ export const OTT_PLATFORMS = {
     logo: '🎥', 
     color: '#FF5722', 
     url: 'https://www.vrott.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbxgrLyDfRsOFS9MaPFq7W5hOrYKEEOShSew&s',
     category: 'kannada'
   },
   // NammaFlix
@@ -282,7 +282,7 @@ export const OTT_PLATFORMS = {
     logo: '🎬', 
     color: '#E91E63', 
     url: 'https://www.nammaflix.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpMS8nv4WYwjbEiZsNe6R2VgsOajpZURJRPw&s',
     category: 'kannada'
   },
   // Gubbare
@@ -291,7 +291,7 @@ export const OTT_PLATFORMS = {
     logo: '🎈', 
     color: '#FF9800', 
     url: 'https://www.gubbare.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyJXy5YXpAlFjM8pcqu9KqMrZOjshlVl90nw&s',
     category: 'kannada'
   },
   // Chauka
@@ -300,7 +300,7 @@ export const OTT_PLATFORMS = {
     logo: '🏏', 
     color: '#4CAF50', 
     url: 'https://www.chauka.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKacbJsHnvEizlYQNqSUvgFGQ9qLnyqgwwmQ&s',
     category: 'kannada'
   },
   // Cini Kannada OTT
@@ -309,7 +309,7 @@ export const OTT_PLATFORMS = {
     logo: '🎥', 
     color: '#9C27B0', 
     url: 'https://www.cinikannada.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8-hkdKNh2_pl72dgtl0IyUASYy4tuidYDBA&s',
     category: 'kannada'
   },
 
@@ -320,7 +320,7 @@ export const OTT_PLATFORMS = {
     logo: '📺', 
     color: '#D32F2F', 
     url: 'https://www.manoramamax.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1Xnd694xBcfz78eP6ZuH11d_3Fy93DsWebw&s',
     category: 'malayalam'
   },
   // Saina Play
@@ -329,7 +329,7 @@ export const OTT_PLATFORMS = {
     logo: '🎬', 
     color: '#FF5722', 
     url: 'https://www.sainaplay.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTSPSh5rbi1LqtB2P8B_TJCxZBxlrqdQk3-w&s',
     category: 'malayalam'
   },
   // C Space (Kerala Govt OTT)
@@ -338,7 +338,7 @@ export const OTT_PLATFORMS = {
     logo: '🏛️', 
     color: '#4CAF50', 
     url: 'https://www.cspace.kerala.gov.in',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0a7qiulLH591WaYOs6ADzArE-CBzpjIWEDQ&s',
     category: 'malayalam'
   },
   // Koode
@@ -347,7 +347,7 @@ export const OTT_PLATFORMS = {
     logo: '🤝', 
     color: '#2196F3', 
     url: 'https://www.koode.com',
-    logoUrl: null,
+    logoUrl: 'https://play-lh.googleusercontent.com/_YIyQ8EPZ4g0epppkGck1XDiA_FRXUt5HUMNS9jCIA1InX-FrqNabCBbEKyQJYFzsm4=w240-h480-rw',
     category: 'malayalam'
   },
   // HighHope OTT
@@ -356,7 +356,7 @@ export const OTT_PLATFORMS = {
     logo: '🌟', 
     color: '#9C27B0', 
     url: 'https://www.highhope.in',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrLpg3aC-RgNzUbSfQTj9ZF--6Pd8E40cJzA&s',
     category: 'malayalam'
   },
   // Limelight OTT
@@ -365,7 +365,7 @@ export const OTT_PLATFORMS = {
     logo: '💡', 
     color: '#FFC107', 
     url: 'https://www.limelightott.com',
-    logoUrl: null,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqpq_LExrNx4qmd04XzLcKXgNUrDJ-a4Jl5A&s',
     category: 'malayalam'
   },
 
@@ -376,7 +376,7 @@ export const OTT_PLATFORMS = {
     logo: '🎭', 
     color: '#FFD700', 
     url: 'https://www.hoichoi.tv',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/41/Hoichoi_Logo.svg',
+    logoUrl: 'https://play-lh.googleusercontent.com/OPVp6CeTbocyOCXcDbNK0Tvyxdd0xBvqQgLE4S4QuTbFKLxyu08_IR3wU4_VYIL31RQ51HZL6K2L3bgSA62iXg',
     category: 'bengali'
   },
 
@@ -387,7 +387,7 @@ export const OTT_PLATFORMS = {
     logo: '🎭',
     color: '#4CAF50',
     url: 'https://www.chaupal.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Chaupal_logo.svg',
+    logoUrl: 'https://play-lh.googleusercontent.com/sCqmOSc4XJ0Id0RwiAXrvL_LKAUgdDn7ZwuYaaADLhgemUj1g-EhjJzkA-qXN5s2yg=w600-h300-pc0xffffff-pd',
     category: 'punjabi'
   },
   // Stage (Haryanvi/Rajasthani)
@@ -396,7 +396,7 @@ export const OTT_PLATFORMS = {
     logo: '🎪',
     color: '#9C27B0',
     url: 'https://www.stageapp.co',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Stage_OTT_logo.svg',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvxLS_Wkt6L8s_C6JSZH5NtQqy1itREyAyIw&s',
     category: 'punjabi'
   },
 
@@ -407,7 +407,7 @@ export const OTT_PLATFORMS = {
     logo: '🌍',
     color: '#FF5722',
     url: 'https://www.planetmarathi.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Planet_Marathi_logo.svg',
+    logoUrl: 'https://img-cdn.publive.online/fit-in/1200x675/bmi/media/post_banners/1cd386cdfea3e4abd0851595ce56d99081f479ad544d9b30d04cefea18670259.jpg',
     category: 'marathi'
   },
 
@@ -417,7 +417,7 @@ export const OTT_PLATFORMS = {
     logo: '▶️', 
     color: '#FF0000', 
     url: 'https://www.youtube.com',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg',
+    logoUrl: 'https://static.vecteezy.com/system/resources/thumbnails/011/998/173/small/youtube-icon-free-vector.jpg',
     category: 'major'
   },
 };

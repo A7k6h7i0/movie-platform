@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useMovies } from '../hooks/useMovies';
 import SEO from '../components/seo/SEO';
-import HeroBanner from '../components/ui/HeroBanner';
+// import HeroBanner from '../components/ui/HeroBanner';
+import HeroRow from '../components/ui/Hero/HeroRow';
 import MovieCarousel from '../components/ui/MovieCarousel';
 import SkeletonLoader from '../components/ui/SkeletonLoader';
 import ErrorState from '../components/ui/ErrorState';
@@ -26,11 +27,18 @@ const Home = () => {
         description="Explore trending movies, popular films, top-rated content, and upcoming releases. Find where to watch on Netflix, Prime, Disney+ and more."
       />
 
-      {trendingLoading ? (
+      {/* {trendingLoading ? (
         <SkeletonLoader type="hero" />
       ) : (
         <HeroBanner movie={trendingData?.results?.[heroIndex]} />
+      )} */}
+
+      {trendingLoading ? (
+        <SkeletonLoader type="hero" />
+      ) : (
+        <HeroRow movies={trendingData?.results?.slice(0, 10)} />
       )}
+
 
       <div className="container mx-auto px-4 py-12 space-y-12">
         {/* OTT Platforms Grid */}
