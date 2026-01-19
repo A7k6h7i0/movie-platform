@@ -7,9 +7,10 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   mongoUri: process.env.MONGO_URI,
   tmdbApiKey: process.env.TMDB_API_KEY,
-  tmdbBaseUrl: process.env.TMDB_BASE_URL || 'https://api.themoviedb.org/3',
-  justWatchApiKey: process.env.JUSTWATCH_API_KEY,
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3001'
+  // ✅ FIXED: Support multiple origins for production
+  corsOrigin: process.env.CORS_ORIGIN 
+    ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+    : ['http://localhost:3000', 'http://localhost:5173']
 };
 
 export const validateConfig = () => {
