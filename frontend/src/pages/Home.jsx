@@ -38,7 +38,7 @@ const Home = () => {
       )}
 
       {/* OTT PLATFORMS */}
-      <div className="px-4 md:px-8 lg:px-16 py-4">
+      <div className="px-4 md:px-8 lg:px-16 py-2">
         <OTTGrid title="Streaming Platforms" showEditButton={true} />
       </div>
 
