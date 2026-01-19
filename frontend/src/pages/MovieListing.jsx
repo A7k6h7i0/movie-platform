@@ -3,7 +3,6 @@ import { useMovies } from '../hooks/useMovies';
 import { useGenres } from '../hooks/useGenres';
 import SEO from '../components/seo/SEO';
 import MovieGrid from '../components/ui/MovieGrid';
-import FilterPanel from '../components/browse/FilterPanel';
 import Pagination from '../components/ui/Pagination';
 
 const MovieListing = () => {
@@ -35,16 +34,7 @@ const MovieListing = () => {
         <h1 className="section-title">📋 Browse Movies</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <FilterPanel
-              genres={genresData?.genres}
-              selectedGenres={selectedGenres}
-              onGenreToggle={handleGenreToggle}
-              years={years}
-              selectedYear={selectedYear}
-              onYearChange={setSelectedYear}
-            />
-          </div>
+          
 
           <div className="lg:col-span-3">
             <MovieGrid 
