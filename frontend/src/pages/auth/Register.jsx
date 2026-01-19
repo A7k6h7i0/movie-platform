@@ -17,17 +17,20 @@ const Register = () => {
     e.preventDefault();
 
     // ✅ Indian mobile number validation
-    // Starts with 6–9 and exactly 10 digits
     const mobileRegex = /^[6-9]\d{9}$/;
-
-    if (!mobileRegex.test(form.mobile)) {
+    if (!mobileRegex.test(form.mobile.trim())) {
       alert("Please enter a valid 10-digit Indian mobile number");
       return;
     }
 
-    // 🔐 Replace with API call later
-    localStorage.setItem("registeredUser", JSON.stringify(form));
+    const normalizedUser = {
+      name: form.name.trim(),
+      email: form.email.trim().toLowerCase(),
+      mobile: form.mobile.trim(),
+      password: form.password.trim()
+    };
 
+    localStorage.setItem("registeredUser", JSON.stringify(normalizedUser));
     navigate("/login");
   };
 
@@ -75,9 +78,7 @@ const Register = () => {
 
         <p className="text-sm mt-4 text-gray-400">
           Already have an account?{" "}
-          <Link to="/login" className="text-red-500">
-            Login
-          </Link>
+          <Link to="/login" className="text-red-500">Login</Link>
         </p>
       </form>
     </div>
