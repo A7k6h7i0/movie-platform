@@ -30,7 +30,31 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
+  };
+
+  // ✅ FIXED: Safely get user initials with proper null checks
+  const getUserInitials = () => {
+    if (!user) return 'U';
+    
+    // Try to get from name first
+    if (user.name && typeof user.name === 'string' && user.name.trim()) {
+      return user.name.charAt(0).toUpperCase();
+    }
+    
+    // Fallback to email
+    if (user.email && typeof user.email === 'string' && user.email.trim()) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    
+    // Final fallback
+    return 'U';
+  };
+
+  // ✅ FIXED: Safely get display name
+  const getDisplayName = () => {
+    if (!user) return 'User';
+    return user.name || user.email || 'User';
   };
 
   return (
@@ -53,7 +77,7 @@ const Navbar = () => {
                   key={link.path}
                   to={link.path}
                   className={({ isActive }) =>
-                    `text-sm font-medium hover:text-primary-accent ${
+                    `text-sm font-medium hover:text-primary-accent transition-colors ${
                       isActive ? 'text-primary-accent' : 'text-gray-300'
                     }`
                   }
@@ -72,7 +96,7 @@ const Navbar = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search movies..."
-                    className="bg-white/10 text-white rounded-full px-4 py-2 pl-10 w-64"
+                    className="bg-white/10 text-white placeholder-gray-400 rounded-full px-4 py-2 pl-10 w-64 focus:outline-none focus:ring-2 focus:ring-primary-accent transition-all"
                   />
                   <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 </div>
@@ -82,28 +106,38 @@ const Navbar = () => {
               {user ? (
                 <div className="relative group">
                   <div className="flex items-center gap-2 cursor-pointer">
-                    <div className="w-9 h-9 rounded-full bg-red-600 flex items-center justify-center text-white font-bold">
-                      {user.name.charAt(0).toUpperCase()}
+                    <div className="w-9 h-9 rounded-full bg-primary-accent flex items-center justify-center text-white font-bold text-sm">
+                      {getUserInitials()}
                     </div>
-                    <span className="hidden md:block text-white text-sm">
-                      {user.name}
+                    <span className="hidden md:block text-white text-sm font-medium">
+                      {getDisplayName()}
                     </span>
                   </div>
 
                   {/* DROPDOWN */}
-                  <div className="absolute right-0 mt-2 w-40 bg-black border border-gray-700 rounded shadow-lg opacity-0 group-hover:opacity-100 transition">
+                  <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    <div className="p-3 border-b border-gray-700">
+                      <p className="text-white font-semibold text-sm truncate">
+                        {getDisplayName()}
+                      </p>
+                      {user.email && (
+                        <p className="text-gray-400 text-xs truncate mt-1">
+                          {user.email}
+                        </p>
+                      )}
+                    </div>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-white hover:bg-red-600"
+                      className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-red-400 transition-colors rounded-b-lg"
                     >
-                      <FiLogOut /> Logout
+                      <FiLogOut size={16} /> Logout
                     </button>
                   </div>
                 </div>
               ) : (
                 <Link
                   to="/login"
-                  className="text-white hover:text-primary-accent"
+                  className="text-white hover:text-primary-accent font-medium transition-colors"
                 >
                   Login
                 </Link>
@@ -112,7 +146,7 @@ const Navbar = () => {
               {/* MOBILE MENU */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden text-white"
+                className="md:hidden text-white hover:text-primary-accent transition-colors"
               >
                 {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
               </button>

@@ -9,18 +9,19 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check localStorage on mount
     const storedUser = localStorage.getItem("loggedInUser");
+    const token = localStorage.getItem("token");
     
-    if (storedUser) {
+    if (storedUser && token) {
       try {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
       } catch (error) {
         console.error("Failed to parse stored user", error);
         localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("token");
       }
     }
     
-    // ✅ CRITICAL FIX: Set authLoading to false AFTER the check completes
     setAuthLoading(false);
   }, []);
 
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("token");
     setUser(null);
   };
 

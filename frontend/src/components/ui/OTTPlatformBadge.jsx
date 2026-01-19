@@ -5,6 +5,9 @@ import { getOTTPlatformUrl, OTT_PLATFORMS } from '../../utils/constants';
 const OTTPlatformBadge = ({ provider, movie = null, clickable = true, size = 'default' }) => {
   const IMAGE_PROXY = 'https://images.weserv.nl/?url=';
   
+  // Get provider name - handle different property names
+  const providerName = provider.provider_name || provider.name || '';
+  
   // Get logo URL - try TMDB first, then our predefined logoUrl
   const getLogoUrl = () => {
     if (provider.logo_path) {
@@ -19,16 +22,29 @@ const OTTPlatformBadge = ({ provider, movie = null, clickable = true, size = 'de
   };
 
   const logoUrl = getLogoUrl();
-  const platformUrl = provider.url || getOTTPlatformUrl(provider.provider_id, provider.provider_name, movie?.title);
   
-  // Get platform color for fallback
+  // Get platform info for color and emoji
   const platformInfo = OTT_PLATFORMS[provider.provider_id];
   const platformColor = platformInfo?.color || '#4A5568';
   const platformEmoji = platformInfo?.logo || '📺';
+  
+  // Get platform URL with movie title for search
+  const platformUrl = clickable && movie?.title 
+    ? getOTTPlatformUrl(provider.provider_id, providerName, movie.title)
+    : provider.url || getOTTPlatformUrl(provider.provider_id, providerName);
 
   const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Debug log to check what URL is being generated
+    console.log('OTT Platform Click:', {
+      providerId: provider.provider_id,
+      providerName: providerName,
+      movieTitle: movie?.title,
+      generatedUrl: platformUrl
+    });
+    
     if (clickable && platformUrl) {
       window.open(platformUrl, '_blank', 'noopener,noreferrer');
     }
@@ -63,7 +79,7 @@ const OTTPlatformBadge = ({ provider, movie = null, clickable = true, size = 'de
       {logoUrl ? (
         <img
           src={logoUrl}
-          alt={provider.provider_name}
+          alt={providerName}
           className={`${currentSize.logo} rounded-lg object-cover`}
           onError={(e) => {
             e.target.style.display = 'none';
@@ -80,7 +96,7 @@ const OTTPlatformBadge = ({ provider, movie = null, clickable = true, size = 'de
       </div>
       <div className="flex-1 min-w-0">
         <p className={`text-white font-semibold ${currentSize.text} truncate`}>
-          {provider.provider_name}
+          {providerName}
         </p>
         <p className={`text-gray-400 ${currentSize.subtext} capitalize`}>
           {provider.type || 'Stream'}
@@ -125,7 +141,7 @@ const OTTPlatformBadge = ({ provider, movie = null, clickable = true, size = 'de
           handleClick(e);
         }
       }}
-      title={platformUrl ? `Watch on ${provider.provider_name}` : provider.provider_name}
+      title={platformUrl ? `Watch "${movie?.title || ''}" on ${providerName}` : providerName}
     >
       {BadgeContent}
     </motion.div>

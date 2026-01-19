@@ -7,6 +7,8 @@ import { config, validateConfig } from './config/env.js';
 import { connectDatabase } from './config/database.js';
 import movieRoutes from './routes/movieRoutes.js';
 import providerRoutes from './routes/providerRoutes.js';
+import authRoutes from './routes/authRoutes.js'; // ✅ NEW - ES Module Import
+import dmcaRoutes from './routes/dmcaRoutes.js'; // ✅ NEW - ES Module Import
 import { providerController } from './controllers/providerController.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
@@ -29,6 +31,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', apiLimiter);
 app.use("/api/config", tmdbConfigRoutes);
+app.use('/api/auth', authRoutes); // ✅ NEW - ES Module
+app.use('/api/dmca', dmcaRoutes); // ✅ NEW - ES Module
 
 app.get('/api/health', (req, res) => {
   res.json({

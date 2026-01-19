@@ -33,7 +33,7 @@ export const OTT_PLATFORMS = {
     logo: '🌟', 
     color: '#1F80E0', 
     url: 'https://www.hotstar.com',
-    logoUrl: 'https://preview.redd.it/jio-hotstar-logo-v0-3qwk3idmh2je1.jpeg?width=640&crop=smart&auto=webp&s=092402d6c39d5525a0c75839e642dd98c07727ea',
+    logoUrl: 'https://media.licdn.com/dms/image/v2/D4D0BAQH_K2FGQdlbgQ/company-logo_200_200/B4DZVqzgcbGcAI-/0/1741253642732/jiohotstar_logo?e=2147483647&t=SoPUKoAcofiBYhBVsZSyqtkwx-iWdy3eEDfDc64cXNA&v=beta',
     category: 'major'
   },
   // Amazon Prime Video
@@ -123,7 +123,7 @@ export const OTT_PLATFORMS = {
     logo: '🍎', 
     color: '#000000', 
     url: 'https://tv.apple.com',
-    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROP-Z1j6_Iq8KzU3cgR2fGyPA2um7WBrRcNQ&s',
+    logoUrl: 'https://www.apple.com/newsroom/images/tile-images/Apple-introduces-apple-tv-plus-03252019.jpg.news_app_ed.jpg',
     category: 'major'
   },
   // Lionsgate Play

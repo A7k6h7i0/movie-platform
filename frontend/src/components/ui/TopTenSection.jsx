@@ -92,7 +92,7 @@ const TopTenSection = ({ title }) => {
       {/* Navigation Buttons */}
       <button
         onClick={() => scroll('left')}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 ml-2 md:ml-6"
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/80 hover:bg-black text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 ml-2 md:ml-6"
         aria-label="Scroll left"
       >
         <FiChevronLeft size={24} />
@@ -100,7 +100,7 @@ const TopTenSection = ({ title }) => {
 
       <button
         onClick={() => scroll('right')}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 mr-2 md:mr-6"
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/80 hover:bg-black text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 mr-2 md:mr-6"
         aria-label="Scroll right"
       >
         <FiChevronRight size={24} />
@@ -109,7 +109,7 @@ const TopTenSection = ({ title }) => {
       {/* Scrollable Container */}
       <div
         ref={scrollRef}
-        className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
+        className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
@@ -159,43 +159,47 @@ const TopTenCard = ({ movie, rank, onMouseEnter, onMouseLeave }) => {
       onMouseEnter={() => onMouseEnter(movie, cardRef)}
       onMouseLeave={onMouseLeave}
       className="relative flex-shrink-0 cursor-pointer group/card"
-      style={{ width: '150px' }}
+      style={{ width: '180px', minHeight: '280px' }}
     >
       {/* Large Rank Number Background */}
-      <div className="absolute -left-6 md:-left-8 bottom-0 z-0 pointer-events-none select-none">
+      <div className="absolute -left-4 md:-left-6 bottom-0 z-0 pointer-events-none select-none overflow-visible">
         <span
-          className="text-[120px] md:text-[140px] lg:text-[180px] font-black leading-none"
+          className="block text-[140px] md:text-[160px] lg:text-[200px] font-black leading-none"
           style={{
             color: 'transparent',
-            WebkitTextStroke: '3px rgba(255, 255, 255, 0.4)',
-            textStroke: '3px rgba(255, 255, 255, 0.4)',
+            WebkitTextStroke: '2px rgba(255, 255, 255, 0.3)',
+            textStroke: '2px rgba(255, 255, 255, 0.3)',
             fontFamily: 'Impact, Arial Black, sans-serif',
+            transform: 'translateY(10%)',
           }}
         >
           {rank}
         </span>
       </div>
 
-      {/* Movie Poster Container */}
-      <div className="relative z-10 ml-8 md:ml-10 transform transition-all duration-300 group-hover/card:scale-105 group-hover/card:-translate-y-2">
+      {/* Movie Poster Container - FIXED Z-INDEX */}
+      <div className="relative z-10 ml-10 md:ml-12 transform transition-all duration-300 group-hover/card:scale-105 group-hover/card:-translate-y-2">
         {/* Poster Image */}
-        <div className="relative overflow-hidden rounded-md shadow-2xl">
+        <div className="relative overflow-hidden rounded-md shadow-2xl bg-gray-800">
           <img
             src={getPosterUrl(movie.poster_path, 'w500')}
             alt={movie.title || 'Movie Poster'}
-            className="w-full h-auto object-cover aspect-[2/3]"
+            className="w-full h-auto object-cover aspect-[2/3] block"
             loading="lazy"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/300x450/1a1a1a/666?text=No+Image';
+            }}
           />
 
           {/* Recently Added Badge */}
-          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2">
+          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-10">
             <span className="bg-red-600 text-white text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-sm shadow-lg whitespace-nowrap">
               Recently added
             </span>
           </div>
 
           {/* Hover Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 z-5" />
         </div>
 
         {/* Movie Title on Hover */}
@@ -210,3 +214,4 @@ const TopTenCard = ({ movie, rank, onMouseEnter, onMouseLeave }) => {
 };
 
 export default TopTenSection;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    

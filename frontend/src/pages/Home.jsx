@@ -120,8 +120,7 @@ const Home = () => {
         )
       )}
 
-      {/* 🇮🇳 TOP 10 MOVIES IN INDIA TODAY - NETFLIX STYLE */}
-      <TopTenSection title="Top 10 Movies in India Today" />
+    
 
       {/* 🎬 SOUTH INDIAN MOVIES */}
       <RegionalSection title="South Indian Movies" category="southIndian" />
@@ -152,6 +151,9 @@ const Home = () => {
       <GenreSection title="Western Movies" genreId={37} />
       <GenreSection title="History Movies" genreId={36} />
       <GenreSection title="Documentary Movies" genreId={99} />
+
+        {/* 🇮🇳 TOP 10 MOVIES IN INDIA TODAY - NETFLIX STYLE */}
+      <TopTenSection title="Top 10 Movies in India Today" />
     </>
   );
 };

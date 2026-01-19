@@ -9,7 +9,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ProtectedRoute from './routes/ProtectedRoute';
 
-// ✅ LEGAL PAGES
+// ✅ LEGAL PAGES (Not lazy - need to be fast)
 import TermsAndConditions from './pages/legal/TermsAndConditions';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import Disclaimer from './pages/legal/Disclaimer';
@@ -28,106 +28,43 @@ const SearchPage = lazy(() => import('./pages/SearchPage'));
 const BrowseByLanguage = lazy(() => import("./pages/BrowseByLanguage"));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
-
 function App() {
   return (
     <Suspense fallback={<LoadingScreen />}>
       <ScrollToTop />
       <Routes>
-
-        {/* 🔓 PUBLIC AUTH ROUTES */}
+        {/* 🔓 PUBLIC AUTH ROUTES - Outside AppLayout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* 🌐 APP LAYOUT */}
-        <Route path="/" element={<AppLayout />}>
+        {/* 📄 PUBLIC LEGAL ROUTES - Outside AppLayout */}
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/disclaimer" element={<Disclaimer />} />
+        <Route path="/dmca" element={<DMCA />} />
 
-          {/* 🔐 PROTECTED APP ROUTES */}
-          <Route
-            index
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
+        {/* 🔐 PROTECTED APP LAYOUT - All routes inside require authentication */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* All child routes are automatically protected */}
+          <Route index element={<Home />} />
+          <Route path="trending" element={<TrendingMovies />} />
+          <Route path="popular" element={<PopularMovies />} />
+          <Route path="top-rated" element={<TopRatedMovies />} />
+          <Route path="upcoming" element={<UpcomingMovies />} />
+          <Route path="movies" element={<MovieListing />} />
+          <Route path="movie/:id/:slug" element={<MovieDetail />} />
+          <Route path="search" element={<SearchPage />} />
           <Route path="browse-language" element={<BrowseByLanguage />} />
-
-
-
-          <Route
-            path="trending"
-            element={
-              <ProtectedRoute>
-                <TrendingMovies />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="popular"
-            element={
-              <ProtectedRoute>
-                <PopularMovies />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="top-rated"
-            element={
-              <ProtectedRoute>
-                <TopRatedMovies />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="upcoming"
-            element={
-              <ProtectedRoute>
-                <UpcomingMovies />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="movies"
-            element={
-              <ProtectedRoute>
-                <MovieListing />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="movie/:id/:slug"
-            element={
-              <ProtectedRoute>
-                <MovieDetail />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="search"
-            element={
-              <ProtectedRoute>
-                <SearchPage />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* 📄 PUBLIC LEGAL ROUTES */}
-          <Route path="terms-and-conditions" element={<TermsAndConditions />} />
-          <Route path="privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="disclaimer" element={<Disclaimer />} />
-          <Route path="dmca" element={<DMCA />} />
           
-
           {/* ❌ NOT FOUND */}
           <Route path="*" element={<NotFound />} />
-
         </Route>
       </Routes>
     </Suspense>

@@ -1,247 +1,234 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { FiUser, FiMail, FiPhone, FiLock, FiEye, FiEyeOff, FiCheckCircle } from "react-icons/fi";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiPhone, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
+import { registerUser } from '../../api/auth';
 
 const Register = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    mobile: "",
-    password: "",
-  });
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    // Clear error for this field
-    if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: "" });
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!form.name.trim()) {
-      newErrors.name = "Name is required";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(form.email.trim())) {
-      newErrors.email = "Invalid email address";
-    }
-
-    const mobileRegex = /^[6-9]\d{9}$/;
-    if (!mobileRegex.test(form.mobile.trim())) {
-      newErrors.mobile = "Invalid Indian mobile number";
-    }
-
-    if (form.password.trim().length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    return newErrors;
-  };
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: ''
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
+    setError('');
+    setSuccess('');
     setLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const response = await registerUser(formData);
+      
+      // Store token and user data
+      localStorage.setItem('token', response.data.token);
+      login(response.data.user);
+      
+      setSuccess('Registration successful! Redirecting...');
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const normalizedUser = {
-      name: form.name.trim(),
-      email: form.email.trim().toLowerCase(),
-      mobile: form.mobile.trim(),
-      password: form.password.trim(),
-    };
-
-    localStorage.setItem("registeredUser", JSON.stringify(normalizedUser));
-    setLoading(false);
-    navigate("/login");
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    setError(''); // Clear error on input change
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-purple-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </div>
-
-      {/* Register Card */}
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-md"
+        className="w-full max-w-md"
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/">
-            <h1 className="text-5xl font-bold text-red-600 mb-2">MovieHub</h1>
-            <p className="text-gray-400 text-sm">Create your account</p>
+          <Link to="/login" className="text-4xl font-bold text-primary-accent">
+            MovieHub
           </Link>
+          <p className="text-gray-400 mt-2">Create your account</p>
         </div>
 
-        {/* Form Container */}
-        <div className="bg-black/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-800 p-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Sign Up</h2>
-          <p className="text-gray-400 mb-6">Start your movie journey today</p>
+        {/* Register Form */}
+        <div className="bg-white/5 backdrop-blur-md border border-gray-800 rounded-xl p-8">
+          {/* Error Message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-2"
+            >
+              <FiAlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={18} />
+              <p className="text-red-500 text-sm">{error}</p>
+            </motion.div>
+          )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Success Message */}
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 bg-green-500/10 border border-green-500/50 rounded-lg flex items-start gap-2"
+            >
+              <FiCheckCircle className="text-green-500 flex-shrink-0 mt-0.5" size={18} />
+              <p className="text-green-500 text-sm">{success}</p>
+            </motion.div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Name Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                 Full Name
               </label>
               <div className="relative">
-                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
+                  id="name"
                   name="name"
-                  value={form.name}
+                  value={formData.name}
                   onChange={handleChange}
-                  placeholder="John Doe"
-                  className={`w-full bg-gray-900/50 border ${
-                    errors.name ? "border-red-500" : "border-gray-700"
-                  } rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/20 transition-all`}
+                  required
+                  minLength={2}
+                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-accent transition-colors"
+                  placeholder="Enter your full name"
                 />
               </div>
-              {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
             </div>
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="email"
+                  id="email"
                   name="email"
-                  value={form.email}
+                  value={formData.email}
                   onChange={handleChange}
-                  placeholder="john@example.com"
-                  className={`w-full bg-gray-900/50 border ${
-                    errors.email ? "border-red-500" : "border-gray-700"
-                  } rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/20 transition-all`}
+                  required
+                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-accent transition-colors"
+                  placeholder="Enter your email"
                 />
               </div>
-              {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
             </div>
 
-            {/* Mobile Input */}
+            {/* Phone Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Mobile Number
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                Phone Number
               </label>
               <div className="relative">
-                <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="tel"
-                  name="mobile"
-                  value={form.mobile}
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
                   onChange={handleChange}
-                  placeholder="9876543210"
-                  maxLength="10"
-                  className={`w-full bg-gray-900/50 border ${
-                    errors.mobile ? "border-red-500" : "border-gray-700"
-                  } rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/20 transition-all`}
+                  required
+                  pattern="[6-9]\d{9}"
+                  maxLength={10}
+                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-accent transition-colors"
+                  placeholder="10-digit mobile number"
                 />
               </div>
-              {errors.mobile && <p className="text-red-400 text-xs mt-1">{errors.mobile}</p>}
+              <p className="text-xs text-gray-500 mt-1">Enter a valid Indian mobile number (10 digits)</p>
             </div>
 
             {/* Password Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
               <div className="relative">
-                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
                   name="password"
-                  value={form.password}
+                  value={formData.password}
                   onChange={handleChange}
-                  placeholder="Minimum 6 characters"
-                  className={`w-full bg-gray-900/50 border ${
-                    errors.password ? "border-red-500" : "border-gray-700"
-                  } rounded-lg pl-12 pr-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/20 transition-all`}
+                  required
+                  minLength={6}
+                  className="w-full pl-10 pr-12 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-accent transition-colors"
+                  placeholder="Create a password (min 6 characters)"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                 >
                   {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-600/30 mt-6"
+              className="w-full bg-primary-accent hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   Creating Account...
-                </span>
+                </>
               ) : (
-                <span className="flex items-center justify-center gap-2">
-                  <FiCheckCircle size={20} />
-                  Create Account
-                </span>
+                'Sign Up'
               )}
             </button>
           </form>
 
-          {/* Login Link */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="text-red-500 hover:text-red-400 font-semibold transition-colors"
-              >
-                Sign In
-              </Link>
-            </p>
-          </div>
-        </div>
+          {/* Terms & Privacy */}
+          <p className="text-center text-gray-400 text-sm mt-6">
+            By signing up, you agree to our{' '}
+            <Link 
+              to="/terms-and-conditions" 
+              className="text-primary-accent hover:text-red-400 underline transition-colors"
+            >
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link 
+              to="/privacy-policy" 
+              className="text-primary-accent hover:text-red-400 underline transition-colors"
+            >
+              Privacy Policy
+            </Link>
+          </p>
 
-        {/* Footer */}
-        <p className="text-center text-gray-500 text-xs mt-6">
-          By signing up, you agree to our{" "}
-          <Link to="/terms" className="text-gray-400 hover:text-white transition-colors">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">
-            Privacy Policy
-          </Link>
-        </p>
+          {/* Login Link */}
+          <p className="text-center text-gray-400 text-sm mt-6">
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary-accent hover:text-red-400 font-semibold transition-colors">
+              Sign In
+            </Link>
+          </p>
+        </div>
       </motion.div>
     </div>
   );
