@@ -8,7 +8,8 @@ export const config = {
   mongoUri: process.env.MONGO_URI,
   tmdbApiKey: process.env.TMDB_API_KEY,
   tmdbBaseUrl: process.env.TMDB_BASE_URL || 'https://api.themoviedb.org/3',
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000'
+  justWatchApiKey: process.env.JUSTWATCH_API_KEY,
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3001'
 };
 
 export const validateConfig = () => {

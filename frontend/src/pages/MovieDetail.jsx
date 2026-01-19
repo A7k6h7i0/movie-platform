@@ -6,6 +6,7 @@ import { fetchMovieProviders } from '../api/tmdb';
 import SEO from '../components/seo/SEO';
 import { getBackdropUrl, getPosterUrl } from '../utils/imageHelper';
 import { formatDate, formatRuntime } from '../utils/dateFormatter';
+import { OTT_PLATFORMS } from '../utils/constants';
 import RatingBadge from '../components/ui/RatingBadge';
 import GenreBadge from '../components/ui/GenreBadge';
 import CastCard from '../components/ui/CastCard';
@@ -56,9 +57,11 @@ const MovieDetail = () => {
     });
   }
 
-  const uniqueProviders = allProviders.filter((provider, index, self) =>
-    index === self.findIndex((p) => p.provider_id === provider.provider_id)
-  );
+  const uniqueProviders = allProviders
+    .filter((provider, index, self) =>
+      index === self.findIndex((p) => p.provider_id === provider.provider_id)
+    )
+    .filter(provider => OTT_PLATFORMS[provider.provider_id]); // Only show platforms defined in constants
 
   return (
     <>
@@ -151,7 +154,7 @@ const MovieDetail = () => {
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
                 {uniqueProviders.map((provider) => (
-                  <OTTPlatformBadge key={`${provider.provider_id}-${provider.country}`} provider={provider} />
+                  <OTTPlatformBadge key={`${provider.provider_id}-${provider.country}`} provider={provider} movie={movie} />
                 ))}
               </div>
               <p className="text-gray-300 text-sm md:text-base mt-4 font-medium">

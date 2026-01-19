@@ -2,31 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================
+   BASE STYLES
+========================= */
 @layer base {
   * {
     @apply box-border;
   }
-  
+
   body {
     @apply bg-primary-dark text-white font-sans antialiased;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
   }
-  /* global.css */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
 
   html {
     scroll-behavior: smooth;
   }
 
+  /* Global scrollbar (outside hero rows) */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -47,21 +42,27 @@
   /* Force full opacity on all headings */
   h1, h2, h3, h4, h5, h6 {
     opacity: 1 !important;
-    color: #FFFFFF !important;
+    color: #ffffff !important;
   }
 }
 
+/* =========================
+   COMPONENT STYLES
+========================= */
 @layer components {
   .btn-primary {
-    @apply bg-primary-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-all duration-300 transform hover:scale-105;
+    @apply bg-primary-accent text-white px-6 py-3 rounded-lg font-semibold
+           hover:bg-red-700 transition-transform transition-colors duration-300
+           hover:scale-105;
   }
 
   .btn-secondary {
-    @apply bg-white/10 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 backdrop-blur-sm;
+    @apply bg-white/10 text-white px-6 py-3 rounded-lg font-semibold
+           hover:bg-white/20 backdrop-blur-sm transition-colors duration-300;
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer;
+    @apply transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer;
   }
 
   .skeleton {
@@ -70,31 +71,38 @@
 
   .section-title {
     @apply text-3xl font-bold mb-6;
-    color: #FFFFFF !important;
+    color: #ffffff !important;
     opacity: 1 !important;
   }
 
   .gradient-overlay {
-    @apply absolute inset-0 bg-gradient-to-t from-primary-dark via-primary-dark/80 to-transparent;
+    @apply absolute inset-0 bg-gradient-to-t
+           from-primary-dark via-primary-dark/80 to-transparent;
   }
 }
 
+/* =========================
+   UTILITIES
+========================= */
 @layer utilities {
-  .text-shadow {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-  }
-
-  .hide-scrollbar::-webkit-scrollbar {
+  /* ✅ SINGLE scrollbar hide utility (Netflix style) */
+  .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
 
-  .hide-scrollbar {
+  .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
 }
 
-/* Netflix-style Hover Preview Styles */
+/* =========================
+   NETFLIX-STYLE HOVER PREVIEW
+========================= */
 .hover-preview-container {
   position: fixed;
   z-index: 9999;
@@ -102,7 +110,7 @@
 }
 
 .hover-preview-video {
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9;
   width: 100%;
   background: #000;
 }
@@ -113,10 +121,10 @@
   border: none;
 }
 
-/* Smooth transitions for hover preview */
+/* Smooth transitions */
 .hover-preview-enter {
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.85);
 }
 
 .hover-preview-enter-active {
@@ -132,11 +140,11 @@
 
 .hover-preview-exit-active {
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.85);
   transition: opacity 150ms ease-in, transform 150ms ease-in;
 }
 
-/* Netflix-style action buttons */
+/* Action buttons */
 .preview-action-btn {
   @apply flex items-center justify-center rounded-full transition-all duration-200;
 }
@@ -149,7 +157,7 @@
   @apply border-2 border-gray-500 hover:border-white bg-transparent;
 }
 
-/* Match percentage color based on value */
+/* Match percentage colors */
 .match-high {
   color: #46d369;
 }

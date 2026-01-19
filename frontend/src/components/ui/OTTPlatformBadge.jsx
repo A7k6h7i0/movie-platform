@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { getOTTPlatformUrl, OTT_PLATFORMS } from '../../utils/constants';
 
-const OTTPlatformBadge = ({ provider, clickable = true, size = 'default' }) => {
+const OTTPlatformBadge = ({ provider, movie = null, clickable = true, size = 'default' }) => {
   const IMAGE_PROXY = 'https://images.weserv.nl/?url=';
   
   // Get logo URL - try TMDB first, then our predefined logoUrl
@@ -19,7 +19,7 @@ const OTTPlatformBadge = ({ provider, clickable = true, size = 'default' }) => {
   };
 
   const logoUrl = getLogoUrl();
-  const platformUrl = getOTTPlatformUrl(provider.provider_id, provider.provider_name);
+  const platformUrl = provider.url || getOTTPlatformUrl(provider.provider_id, provider.provider_name, movie?.title);
   
   // Get platform color for fallback
   const platformInfo = OTT_PLATFORMS[provider.provider_id];
@@ -134,6 +134,7 @@ const OTTPlatformBadge = ({ provider, clickable = true, size = 'default' }) => {
 
 OTTPlatformBadge.propTypes = {
   provider: PropTypes.object.isRequired,
+  movie: PropTypes.object,
   clickable: PropTypes.bool,
   size: PropTypes.oneOf(['small', 'default', 'large'])
 };

@@ -3,7 +3,7 @@ import { useMovies } from '../hooks/useMovies';
 import { useGenres } from '../hooks/useGenres';
 import SEO from '../components/seo/SEO';
 import MovieGrid from '../components/ui/MovieGrid';
-import FilterPanel from '../components/ui/FilterPanel';
+import FilterPanel from '../components/browse/FilterPanel';
 import Pagination from '../components/ui/Pagination';
 
 const MovieListing = () => {

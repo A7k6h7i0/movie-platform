@@ -139,11 +139,11 @@ const OTTGrid = ({ title = 'Streaming Platforms' }) => {
                 {/* EDIT MODE ARROWS */}
                 {editMode && (
                   <>
-                    <div className="absolute -left-2 top-1/2 -translate-y-1/2 bg-black/70 p-1 rounded-full">
-                      <FiChevronLeft size={14} />
+                    <div className="absolute -left-2 top-1/2 -translate-y-1/2">
+                      <FiChevronLeft size={14} className="text-white" />
                     </div>
-                    <div className="absolute -right-2 top-1/2 -translate-y-1/2 bg-black/70 p-1 rounded-full">
-                      <FiChevronRight size={14} />
+                    <div className="absolute -right-2 top-1/2 -translate-y-1/2">
+                      <FiChevronRight size={14} className="text-white" />
                     </div>
                   </>
                 )}

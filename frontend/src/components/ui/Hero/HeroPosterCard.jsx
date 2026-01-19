@@ -1,15 +1,13 @@
-import { getPosterUrl } from "../../../utils/imageHelper";
-
 const HeroPosterCard = ({ movie }) => {
   return (
-    <div className="group relative h-[260px] rounded-xl overflow-hidden bg-gray-900 cursor-pointer">
+    <div className="relative w-full h-full rounded-lg overflow-hidden bg-zinc-900">
       <img
-        src={getPosterUrl(movie.poster_path)}
-        alt={movie.title || movie.name}
-        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        src={`https://image.tmdb.org/t/p/w342${movie?.poster_path}`}
+        alt={movie?.title}
+        className="w-full h-full object-cover"
+        loading="lazy"
       />
-
-      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
     </div>
   );
 };

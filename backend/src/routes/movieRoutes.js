@@ -8,6 +8,7 @@ router.get('/popular', movieController.getPopular);
 router.get('/top-rated', movieController.getTopRated);
 router.get('/upcoming', movieController.getUpcoming);
 router.get('/search', movieController.searchMovies);
+router.get('/browse', movieController.browseMovies);
 router.get('/:id', movieController.getMovieDetail);
 
 export default router;

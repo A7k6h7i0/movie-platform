@@ -448,7 +448,37 @@ export const DEFAULT_OTT_ORDER = [
 
 
 // Comprehensive OTT Platform URL mapping for dynamic providers
-export const getOTTPlatformUrl = (providerId, providerName) => {
+export const getOTTPlatformUrl = (providerId, providerName, movieTitle = null) => {
+  const normalizedName = providerName?.toLowerCase().trim();
+  const encodedTitle = movieTitle ? encodeURIComponent(movieTitle) : null;
+
+  // If movieTitle provided, return search URLs
+  if (movieTitle && encodedTitle) {
+    const searchUrls = {
+      'netflix': `https://www.netflix.com/search?q=${encodedTitle}`,
+      'amazon prime video': `https://www.primevideo.com/search/ref=atv_sr_sug_1?phrase=${encodedTitle}`,
+      'prime video': `https://www.primevideo.com/search/ref=atv_sr_sug_1?phrase=${encodedTitle}`,
+      'disney+ hotstar': `https://www.hotstar.com/search?q=${encodedTitle}`,
+      'hotstar': `https://www.hotstar.com/search?q=${encodedTitle}`,
+      'jiocinema': `https://www.jiocinema.com/search?q=${encodedTitle}`,
+      'jio cinema': `https://www.jiocinema.com/search?q=${encodedTitle}`,
+      'sonyliv': `https://www.sonyliv.com/search?q=${encodedTitle}`,
+      'sony liv': `https://www.sonyliv.com/search?q=${encodedTitle}`,
+      'zee5': `https://www.zee5.com/search?q=${encodedTitle}`,
+      'mx player': `https://www.mxplayer.in/search?q=${encodedTitle}`,
+      'mxplayer': `https://www.mxplayer.in/search?q=${encodedTitle}`,
+      'altbalaji': `https://www.altbalaji.com/search?q=${encodedTitle}`,
+      'alt balaji': `https://www.altbalaji.com/search?q=${encodedTitle}`,
+      'youtube': `https://www.youtube.com/results?search_query=${encodedTitle}`,
+      'youtube premium': `https://www.youtube.com/results?search_query=${encodedTitle}`,
+      // Add more as needed
+    };
+
+    if (searchUrls[normalizedName]) {
+      return searchUrls[normalizedName];
+    }
+  }
+
   // Check if we have a predefined URL by ID
   if (OTT_PLATFORMS[providerId]?.url) {
     return OTT_PLATFORMS[providerId].url;
@@ -568,9 +598,7 @@ export const getOTTPlatformUrl = (providerId, providerName) => {
     'acorn tv': 'https://acorn.tv',
     'curiosity stream': 'https://curiositystream.com'
   };
-  
-  const normalizedName = providerName?.toLowerCase().trim();
-  
+
   // Direct match
   if (urlMappings[normalizedName]) {
     return urlMappings[normalizedName];

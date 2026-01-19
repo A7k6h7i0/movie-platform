@@ -8,11 +8,9 @@ const Footer = () => {
     <footer className="bg-primary-card border-t border-gray-800 mt-20">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-3xl"></span>
-              <span className="text-xl font-bold text-primary-accent">MovieHub</span>
-            </div>
+            <span className="text-xl font-bold text-primary-accent">MovieHub</span>
             <p className="text-gray-400 text-sm">
               Your premium destination for discovering movies, ratings, and streaming platforms.
             </p>
@@ -21,38 +19,30 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
-              <li><Link to="/trending" className="text-gray-400 hover:text-white transition-colors">Trending</Link></li>
-              <li><Link to="/popular" className="text-gray-400 hover:text-white transition-colors">Popular</Link></li>
-              <li><Link to="/top-rated" className="text-gray-400 hover:text-white transition-colors">Top Rated</Link></li>
+              <li><Link to="/" className="text-gray-400 hover:text-white">Home</Link></li>
+              <li><Link to="/trending" className="text-gray-400 hover:text-white">Trending</Link></li>
+              <li><Link to="/popular" className="text-gray-400 hover:text-white">Popular</Link></li>
+              <li><Link to="/top-rated" className="text-gray-400 hover:text-white">Top Rated</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-white font-semibold mb-4">Categories</h3>
+            <h3 className="text-white font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Action</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Drama</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Comedy</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Thriller</a></li>
+              <li><Link to="/disclaimer" className="text-gray-400 hover:text-white">Disclaimer</Link></li>
+              <li><Link to="/terms-and-conditions" className="text-gray-400 hover:text-white">Terms & Conditions</Link></li>
+              <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
+              <li><Link to="/dmca" className="text-gray-400 hover:text-white">DMCA</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-white font-semibold mb-4">Connect With Us</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-primary-accent transition-colors">
-                <FiGithub size={24} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary-accent transition-colors">
-                <FiTwitter size={24} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary-accent transition-colors">
-                <FiLinkedin size={24} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary-accent transition-colors">
-                <FiMail size={24} />
-              </a>
+              <FiGithub className="text-gray-400 hover:text-primary-accent" size={22} />
+              <FiTwitter className="text-gray-400 hover:text-primary-accent" size={22} />
+              <FiLinkedin className="text-gray-400 hover:text-primary-accent" size={22} />
+              <FiMail className="text-gray-400 hover:text-primary-accent" size={22} />
             </div>
           </div>
         </div>

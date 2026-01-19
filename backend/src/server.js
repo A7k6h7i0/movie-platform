@@ -11,6 +11,7 @@ import { providerController } from './controllers/providerController.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 import { logger } from './utils/logger.js';
+import tmdbConfigRoutes from "./routes/tmdbConfigRoutes.js";
 
 validateConfig();
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', apiLimiter);
+app.use("/api/config", tmdbConfigRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({

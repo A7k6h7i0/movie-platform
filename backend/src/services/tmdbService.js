@@ -95,5 +95,17 @@ export const tmdbService = {
     const data = await tmdbAxios.get('/genre/movie/list');
     cacheService.set(cacheKey, data, 86400 * 7);
     return data;
+  },
+
+  async discoverMovies(params = {}, page = 1) {
+    const cacheKey = `discover_${JSON.stringify(params)}_${page}`;
+    const cached = cacheService.get(cacheKey);
+    if (cached) return cached;
+
+    const data = await tmdbAxios.get('/discover/movie', {
+      params: { ...params, page }
+    });
+    cacheService.set(cacheKey, data, CACHE_DURATION.search); // Use search cache duration
+    return data;
   }
 };

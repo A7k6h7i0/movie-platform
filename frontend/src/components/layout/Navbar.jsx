@@ -12,9 +12,10 @@ const Navbar = () => {
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/trending', label: 'Trending' },
+    { path: '/upcoming', label: 'Upcoming' },
     { path: '/popular', label: 'Popular' },
     { path: '/top-rated', label: 'Top Rated' },
-    { path: '/upcoming', label: 'Upcoming' }
+    { path: '/browse-language', label: 'Browse by Language' }, 
   ];
 
   const handleSearch = (e) => {

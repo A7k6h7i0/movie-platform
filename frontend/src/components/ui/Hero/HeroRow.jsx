@@ -11,7 +11,6 @@ const HeroRow = ({ movies }) => {
   const rowRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // triple array for bi-directional infinite scroll
   const loopMovies = [...movies, ...movies, ...movies];
   const middleStartIndex = movies.length;
 
@@ -19,48 +18,42 @@ const HeroRow = ({ movies }) => {
     const container = rowRef.current;
     if (!container) return;
 
-    // start from middle set
     const cardWidth = CARD_ACTIVE + GAP;
     container.scrollLeft = middleStartIndex * cardWidth;
-     setActiveIndex(0);
-
+    setActiveIndex(0);
   }, [movies.length]);
 
   const handleScroll = () => {
-  const container = rowRef.current;
-  if (!container) return;
+    const container = rowRef.current;
+    if (!container) return;
 
-  const cardWidth = CARD_ACTIVE + GAP;
-  const scrollLeft = container.scrollLeft;
+    const cardWidth = CARD_ACTIVE + GAP;
+    const scrollLeft = container.scrollLeft;
 
-  const rawIndex = Math.round(scrollLeft / cardWidth);
-  const normalizedIndex =
-    (rawIndex - middleStartIndex + movies.length) % movies.length;
+    const rawIndex = Math.round(scrollLeft / cardWidth);
+    const normalizedIndex =
+      (rawIndex - middleStartIndex + movies.length) % movies.length;
 
-  setActiveIndex(normalizedIndex);
+    setActiveIndex(normalizedIndex);
 
-  const middleWidth = movies.length * cardWidth;
-  const totalWidth = loopMovies.length * cardWidth;
+    const middleWidth = movies.length * cardWidth;
+    const totalWidth = loopMovies.length * cardWidth;
 
-  // Left edge → jump right
-  if (scrollLeft <= middleWidth * 0.5) {
-    container.scrollLeft = scrollLeft + middleWidth;
-  }
+    if (scrollLeft <= middleWidth * 0.5) {
+      container.scrollLeft += middleWidth;
+    }
 
-  // Right edge → jump left
-  if (scrollLeft >= totalWidth - middleWidth * 1.5) {
-    container.scrollLeft = scrollLeft - middleWidth;
-  }
-};
-
-
+    if (scrollLeft >= totalWidth - middleWidth * 1.5) {
+      container.scrollLeft -= middleWidth;
+    }
+  };
 
   return (
-    <section className="relative w-full bg-black pt-20">
+    <div className="relative pb-16">
       <div
         ref={rowRef}
         onScroll={handleScroll}
-        className="flex gap-6 overflow-x-auto px-10 snap-x snap-mandatory scrollbar-hide"
+        className="flex gap-6 overflow-x-auto px-12 snap-x snap-mandatory scrollbar-hide"
       >
         {loopMovies.map((movie, index) => {
           const isActive = index % movies.length === activeIndex;
@@ -68,10 +61,11 @@ const HeroRow = ({ movies }) => {
           return (
             <div
               key={`${movie.id}-${index}`}
-              className="snap-start flex-shrink-0"
+              className="snap-start flex-shrink-0 will-change-transform"
               style={{
                 width: isActive ? CARD_ACTIVE : CARD_SMALL,
-                transition: "all 0.4s ease",
+                transition:
+                  "width 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             >
               {isActive ? (
@@ -83,7 +77,7 @@ const HeroRow = ({ movies }) => {
           );
         })}
       </div>
-    </section>
+    </div>
   );
 };
 

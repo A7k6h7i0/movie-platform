@@ -69,7 +69,7 @@ export const movieController = {
   async searchMovies(req, res, next) {
     try {
       const { query, page = 1 } = req.query;
-      
+
       if (!query) {
         return res.status(400).json({
           success: false,
@@ -78,6 +78,34 @@ export const movieController = {
       }
 
       const data = await tmdbService.searchMovies(query, parseInt(page));
+      res.json({
+        success: true,
+        data
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async browseMovies(req, res, next) {
+    try {
+      const { with_original_language, with_genres, year, page = 1 } = req.query;
+
+      // If no filters, return popular movies as default
+      if (!with_original_language && !with_genres && !year) {
+        const data = await tmdbService.getPopular(parseInt(page));
+        return res.json({
+          success: true,
+          data
+        });
+      }
+
+      const params = {};
+      if (with_original_language) params.with_original_language = with_original_language;
+      if (with_genres) params.with_genres = with_genres;
+      if (year) params.year = year;
+
+      const data = await tmdbService.discoverMovies(params, parseInt(page));
       res.json({
         success: true,
         data

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useMovies } from '../hooks/useMovies';
 import SEO from '../components/seo/SEO';
-// import HeroBanner from '../components/ui/HeroBanner';
-import HeroRow from '../components/ui/Hero/HeroRow';
+import HeroSection from '../components/ui/Hero/HeroSection';
 import MovieCarousel from '../components/ui/MovieCarousel';
 import SkeletonLoader from '../components/ui/SkeletonLoader';
 import ErrorState from '../components/ui/ErrorState';
@@ -10,11 +9,15 @@ import OTTGrid from '../components/ui/OTTGrid';
 
 const Home = () => {
   const [heroIndex] = useState(0);
-  
-  const { data: trendingData, isLoading: trendingLoading, error: trendingError } = useMovies('trending');
-  const { data: popularData, isLoading: popularLoading } = useMovies('popular');
-  const { data: topRatedData, isLoading: topRatedLoading } = useMovies('topRated');
-  const { data: upcomingData, isLoading: upcomingLoading } = useMovies('upcoming');
+
+  const { data: trendingData, isLoading: trendingLoading, error: trendingError } =
+    useMovies('trending');
+  const { data: popularData, isLoading: popularLoading } =
+    useMovies('popular');
+  const { data: topRatedData, isLoading: topRatedLoading } =
+    useMovies('topRated');
+  const { data: upcomingData, isLoading: upcomingLoading } =
+    useMovies('upcoming');
 
   if (trendingError) {
     return <ErrorState message={trendingError.message} />;
@@ -24,48 +27,68 @@ const Home = () => {
     <>
       <SEO
         title="MovieHub - Discover Trending Movies & TV Shows"
-        description="Explore trending movies, popular films, top-rated content, and upcoming releases. Find where to watch on Netflix, Prime, Disney+ and more."
+        description="Explore trending movies, popular films, top-rated content, and upcoming releases."
       />
 
-      {/* {trendingLoading ? (
-        <SkeletonLoader type="hero" />
-      ) : (
-        <HeroBanner movie={trendingData?.results?.[heroIndex]} />
-      )} */}
-
+      {/* HERO SECTION */}
       {trendingLoading ? (
         <SkeletonLoader type="hero" />
       ) : (
-        <HeroRow movies={trendingData?.results?.slice(0, 10)} />
+        <HeroSection movies={trendingData?.results?.slice(0, 20)} />
       )}
 
-
-      <div className="container mx-auto px-4 py-12 space-y-12">
-        {/* OTT Platforms Grid */}
+      {/* OTT PLATFORMS */}
+      <div className="px-4 md:px-8 lg:px-16 py-8">
         <OTTGrid title="Streaming Platforms" showEditButton={true} />
+      </div>
 
-        {trendingLoading ? (
+      {/* TRENDING NOW — FIXED STYLE */}
+      {trendingLoading ? (
+        <div className="px-6 md:px-10 lg:px-16 py-8">
           <div className="grid grid-cols-6 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <SkeletonLoader key={i} />
             ))}
           </div>
-        ) : (
-          <MovieCarousel movies={trendingData?.results?.slice(0, 12)} title="Trending Now" />
-        )}
+        </div>
+      ) : (
+        <div className="px-6 md:px-10 lg:px-16">
+          <MovieCarousel
+            movies={trendingData?.results?.slice(0, 12)}
+            title="Trending Now"
+          />
+        </div>
+      )}
 
-        {popularLoading ? null : (
-          <MovieCarousel movies={popularData?.results?.slice(0, 12)} title="Popular Movies" />
-        )}
+      {/* COMING SOON */}
+      {!upcomingLoading && (
+        <div className="px-6 md:px-10 lg:px-16">
+          <MovieCarousel
+            movies={upcomingData?.results?.slice(0, 12)}
+            title="Coming Soon"
+          />
+        </div>
+      )}
 
-        {topRatedLoading ? null : (
-          <MovieCarousel movies={topRatedData?.results?.slice(0, 12)} title="Top Rated" />
-        )}
+      {/* POPULAR */}
+      {!popularLoading && (
+        <div className="px-6 md:px-10 lg:px-16">
+          <MovieCarousel
+            movies={popularData?.results?.slice(0, 12)}
+            title="Popular Movies"
+          />
+        </div>
+      )}
 
-        {upcomingLoading ? null : (
-          <MovieCarousel movies={upcomingData?.results?.slice(0, 12)} title="Coming Soon" />
-        )}
-      </div>
+      {/* TOP RATED */}
+      {!topRatedLoading && (
+        <div className="px-6 md:px-10 lg:px-16">
+          <MovieCarousel
+            movies={topRatedData?.results?.slice(0, 12)}
+            title="Top Rated"
+          />
+        </div>
+      )}
     </>
   );
 };
