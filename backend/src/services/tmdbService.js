@@ -7,7 +7,8 @@ const CACHE_DURATION = {
   topRated: 86400,
   upcoming: 43200,
   movieDetail: 86400,
-  search: 3600
+  search: 3600,
+  discover: 3600
 };
 
 export const tmdbService = {
@@ -102,10 +103,59 @@ export const tmdbService = {
     const cached = cacheService.get(cacheKey);
     if (cached) return cached;
 
+    const discoverParams = { 
+      ...params, 
+      page,
+      sort_by: params.sort_by || 'popularity.desc'
+    };
+
     const data = await tmdbAxios.get('/discover/movie', {
-      params: { ...params, page }
+      params: discoverParams
     });
-    cacheService.set(cacheKey, data, CACHE_DURATION.search); // Use search cache duration
+    cacheService.set(cacheKey, data, CACHE_DURATION.discover);
     return data;
+  },
+
+  // NEW: South Indian Movies
+  async getSouthIndianMovies(page = 1) {
+    const cacheKey = `southIndian_${page}`;
+    const cached = cacheService.get(cacheKey);
+    if (cached) return cached;
+
+    const data = await tmdbAxios.get('/discover/movie', {
+      params: {
+        page,
+        sort_by: 'popularity.desc',
+        with_original_language: 'ta|te|ml|kn',
+        region: 'IN'
+      }
+    });
+    cacheService.set(cacheKey, data, CACHE_DURATION.discover);
+    return data;
+  },
+
+  // NEW: Top 10 India Movies
+  async getTopIndiaMovies() {
+    const cacheKey = 'topIndia_today';
+    const cached = cacheService.get(cacheKey);
+    if (cached) return cached;
+
+    const data = await tmdbAxios.get('/discover/movie', {
+      params: {
+        page: 1,
+        sort_by: 'popularity.desc',
+        region: 'IN',
+        'vote_count.gte': 100
+      }
+    });
+
+    // Return only top 10
+    const top10Data = {
+      ...data,
+      results: data.results?.slice(0, 10) || []
+    };
+
+    cacheService.set(cacheKey, top10Data, 10800); // 3 hours cache
+    return top10Data;
   }
 };

@@ -69,7 +69,6 @@ export const movieController = {
   async searchMovies(req, res, next) {
     try {
       const { query, page = 1 } = req.query;
-
       if (!query) {
         return res.status(400).json({
           success: false,
@@ -104,6 +103,33 @@ export const movieController = {
       if (with_original_language) params.with_original_language = with_original_language;
       if (with_genres) params.with_genres = with_genres;
       if (year) params.year = year;
+
+      const data = await tmdbService.discoverMovies(params, parseInt(page));
+      res.json({
+        success: true,
+        data
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // New method for genre-based discovery
+  async discoverByGenre(req, res, next) {
+    try {
+      const { genre, page = 1 } = req.query;
+      
+      if (!genre) {
+        return res.status(400).json({
+          success: false,
+          message: 'Genre ID is required'
+        });
+      }
+
+      const params = {
+        with_genres: genre,
+        sort_by: 'popularity.desc'
+      };
 
       const data = await tmdbService.discoverMovies(params, parseInt(page));
       res.json({
