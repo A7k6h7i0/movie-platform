@@ -14,6 +14,7 @@ import TermsAndConditions from './pages/legal/TermsAndConditions';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import Disclaimer from './pages/legal/Disclaimer';
 import DMCA from './pages/legal/DMCA';
+import ScrollToTop from "./components/layout/ScrollToTop";
 
 // ✅ LAZY PAGES
 const Home = lazy(() => import('./pages/Home'));
@@ -31,6 +32,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 function App() {
   return (
     <Suspense fallback={<LoadingScreen />}>
+      <ScrollToTop />
       <Routes>
 
         {/* 🔓 PUBLIC AUTH ROUTES */}
@@ -121,6 +123,7 @@ function App() {
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="disclaimer" element={<Disclaimer />} />
           <Route path="dmca" element={<DMCA />} />
+          
 
           {/* ❌ NOT FOUND */}
           <Route path="*" element={<NotFound />} />
