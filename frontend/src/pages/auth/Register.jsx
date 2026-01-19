@@ -16,6 +16,15 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // ✅ Indian mobile number validation
+    // Starts with 6–9 and exactly 10 digits
+    const mobileRegex = /^[6-9]\d{9}$/;
+
+    if (!mobileRegex.test(form.mobile)) {
+      alert("Please enter a valid 10-digit Indian mobile number");
+      return;
+    }
+
     // 🔐 Replace with API call later
     localStorage.setItem("registeredUser", JSON.stringify(form));
 
@@ -27,24 +36,48 @@ const Register = () => {
       <form onSubmit={handleSubmit} className="bg-gray-900 p-8 rounded w-96">
         <h2 className="text-2xl font-bold mb-6">Register</h2>
 
-        <input name="name" placeholder="Name" onChange={handleChange}
-          className="w-full p-2 mb-3 bg-black border border-gray-700" required />
-
-        <input name="email" placeholder="Email" onChange={handleChange}
-          className="w-full p-2 mb-3 bg-black border border-gray-700" required />
-
-        <input name="mobile" placeholder="Mobile Number" onChange={handleChange}
-          className="w-full p-2 mb-3 bg-black border border-gray-700" required />
-
-        <input type="password" name="password" placeholder="Password"
+        <input
+          name="name"
+          placeholder="Name"
           onChange={handleChange}
-          className="w-full p-2 mb-4 bg-black border border-gray-700" required />
+          className="w-full p-2 mb-3 bg-black border border-gray-700"
+          required
+        />
 
-        <button className="w-full bg-red-600 py-2 rounded">Register</button>
+        <input
+          name="email"
+          placeholder="Email"
+          onChange={handleChange}
+          className="w-full p-2 mb-3 bg-black border border-gray-700"
+          required
+        />
+
+        <input
+          name="mobile"
+          placeholder="Mobile Number"
+          onChange={handleChange}
+          className="w-full p-2 mb-3 bg-black border border-gray-700"
+          required
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          onChange={handleChange}
+          className="w-full p-2 mb-4 bg-black border border-gray-700"
+          required
+        />
+
+        <button className="w-full bg-red-600 py-2 rounded">
+          Register
+        </button>
 
         <p className="text-sm mt-4 text-gray-400">
           Already have an account?{" "}
-          <Link to="/login" className="text-red-500">Login</Link>
+          <Link to="/login" className="text-red-500">
+            Login
+          </Link>
         </p>
       </form>
     </div>
