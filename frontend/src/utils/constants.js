@@ -60,7 +60,7 @@ export const OTT_PLATFORMS = {
     logo: '🎥', 
     color: '#E91E63', 
     url: 'https://www.jiocinema.com',
-    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqVDAvFgp_JjSmSA-QxCBFE8QRTarByrNRuw&s',
+    logoUrl: 'https://cdn-1.webcatalog.io/catalog/jiocinema/jiocinema-icon-filled-256.png?v=1763945129759',
     category: 'major'
   },
   // Sony LIV
@@ -96,7 +96,7 @@ export const OTT_PLATFORMS = {
     logo: '🎥', 
     color: '#FF5722', 
     url: 'https://www.jiocinema.com',
-    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKU7dvflIZGiTrBxfhgQmCEd65-8TPmnKCeQ&s',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM4cC0VG-dHx2S6wfaPHGhYUTly6_AkunZBA&s',
     category: 'major'
   },
   // ALTBalaji
