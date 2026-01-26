@@ -15,6 +15,7 @@ import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import Disclaimer from './pages/legal/Disclaimer';
 import DMCA from './pages/legal/DMCA';
 import ScrollToTop from "./components/layout/ScrollToTop";
+import ForgotPassword from './pages/auth/ForgotPassword';
 
 // ✅ LAZY PAGES
 const Home = lazy(() => import('./pages/Home'));
@@ -62,6 +63,7 @@ function App() {
           <Route path="movie/:id/:slug" element={<MovieDetail />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="browse-language" element={<BrowseByLanguage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           
           {/* ❌ NOT FOUND */}
           <Route path="*" element={<NotFound />} />
