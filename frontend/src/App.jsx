@@ -16,6 +16,8 @@ import Disclaimer from './pages/legal/Disclaimer';
 import DMCA from './pages/legal/DMCA';
 import ScrollToTop from "./components/layout/ScrollToTop";
 import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
+
 
 // ✅ LAZY PAGES
 const Home = lazy(() => import('./pages/Home'));
@@ -38,7 +40,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        {/* <Route path="/reset-password/:token" element={<ResetPassword />} /> */}
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* 📄 PUBLIC LEGAL ROUTES - Outside AppLayout */}
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
