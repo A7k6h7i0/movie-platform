@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+
 
 // Generate JWT Token
 const generateToken = (userId) => {
@@ -76,6 +78,16 @@ export const getMe = async (req, res) => {
 // ===============================
 // ✅ FORGOT PASSWORD (NEW)
 // ===============================
+// ================== EMAIL SETUP ==================
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+// ================== FORGOT PASSWORD (EMAIL LINK) ==================
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -84,13 +96,49 @@ export const forgotPassword = async (req, res) => {
     return res.status(404).json({ success: false, message: 'User not found' });
   }
 
-  const tempPassword = crypto.randomBytes(4).toString('hex');
-  user.password = tempPassword;
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+  user.resetPasswordToken = hashedToken;
+  user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
   await user.save();
 
-  res.json({
-    success: true,
-    message: 'Temporary password generated successfully',
-    tempPassword // ⚠️ For demo/testing (email can be added later)
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+  await transporter.sendMail({
+    to: user.email,
+    subject: 'MovieHub Password Reset',
+    html: `
+      <p>You requested a password reset.</p>
+      <p>Click below to reset your password:</p>
+      <a href="${resetUrl}">${resetUrl}</a>
+      <p>This link expires in 15 minutes.</p>
+    `
   });
+
+  res.json({ success: true, message: 'Password reset link sent to email' });
+};
+
+// ================== RESET PASSWORD ==================
+export const resetPassword = async (req, res) => {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return res.status(400).json({ success: false, message: 'Invalid or expired token' });
+  }
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  res.json({ success: true, message: 'Password reset successful' });
 };

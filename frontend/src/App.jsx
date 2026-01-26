@@ -37,6 +37,8 @@ function App() {
         {/* 🔓 PUBLIC AUTH ROUTES - Outside AppLayout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* <Route path="/reset-password/:token" element={<ResetPassword />} /> */}
 
         {/* 📄 PUBLIC LEGAL ROUTES - Outside AppLayout */}
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
@@ -63,7 +65,7 @@ function App() {
           <Route path="movie/:id/:slug" element={<MovieDetail />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="browse-language" element={<BrowseByLanguage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          
           
           {/* ❌ NOT FOUND */}
           <Route path="*" element={<NotFound />} />
