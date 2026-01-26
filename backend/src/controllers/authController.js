@@ -89,35 +89,51 @@ const transporter = nodemailer.createTransport({
 
 // ================== FORGOT PASSWORD (EMAIL LINK) ==================
 export const forgotPassword = async (req, res) => {
-  const { email } = req.body;
+  try {
+    const { email } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(404).json({ success: false, message: 'User not found' });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+    await user.save();
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    // ✅ RESPOND FIRST (THIS FIXES 502)
+    res.status(200).json({
+      success: true,
+      message: 'Password reset link sent to email'
+    });
+
+    // ✅ SEND EMAIL AFTER RESPONSE (NON-BLOCKING)
+    transporter.sendMail({
+      to: user.email,
+      subject: 'MovieHub Password Reset',
+      html: `
+        <p>You requested a password reset.</p>
+        <p>Click below to reset your password:</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>This link expires in 15 minutes.</p>
+      `
+    }).catch(err => {
+      console.error('Email send failed:', err.message);
+    });
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
   }
-
-  const resetToken = crypto.randomBytes(32).toString('hex');
-  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-
-  user.resetPasswordToken = hashedToken;
-  user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-  await user.save();
-
-  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-
-  await transporter.sendMail({
-    to: user.email,
-    subject: 'MovieHub Password Reset',
-    html: `
-      <p>You requested a password reset.</p>
-      <p>Click below to reset your password:</p>
-      <a href="${resetUrl}">${resetUrl}</a>
-      <p>This link expires in 15 minutes.</p>
-    `
-  });
-
-  res.json({ success: true, message: 'Password reset link sent to email' });
 };
+
 
 // ================== RESET PASSWORD ==================
 export const resetPassword = async (req, res) => {
