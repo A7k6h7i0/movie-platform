@@ -1,9 +1,11 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-// Generate JWT Token
+// ===============================
+// JWT
+// ===============================
 const generateToken = (userId) => {
   return jwt.sign(
     { id: userId },
@@ -12,7 +14,9 @@ const generateToken = (userId) => {
   );
 };
 
-// @desc Register new user
+// ===============================
+// REGISTER
+// ===============================
 export const register = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
@@ -44,7 +48,9 @@ export const register = async (req, res) => {
   }
 };
 
-// @desc Login user
+// ===============================
+// LOGIN
+// ===============================
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -68,31 +74,22 @@ export const login = async (req, res) => {
   }
 };
 
-// @desc Get current user
+// ===============================
+// GET ME
+// ===============================
 export const getMe = async (req, res) => {
   const user = await User.findById(req.user.id);
   res.json({ success: true, data: { user } });
 };
 
 // ===============================
-// ✅ FORGOT PASSWORD
+// ✅ RESEND EMAIL SETUP (RENDER SAFE)
 // ===============================
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ✅ FIXED SMTP TRANSPORT (RENDER SAFE)
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,              // ✅ DO NOT use 465 on Render
-  secure: false,          // ✅ must be false for 587
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000
-});
-
-// ================== FORGOT PASSWORD ==================
+// ===============================
+// FORGOT PASSWORD
+// ===============================
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -111,36 +108,33 @@ export const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-    // ✅ Respond first
+    // ✅ Respond immediately
     res.status(200).json({
       success: true,
       message: 'Password reset link sent to email'
     });
 
-    // ✅ Send email async (non-blocking)
-    transporter.sendMail({
-      from: `"MovieHub" <${process.env.EMAIL_USER}>`,
+    // ✅ Send email via Resend (HTTP, not SMTP)
+    await resend.emails.send({
+      from: 'MovieHub <onboarding@resend.dev>',
       to: user.email,
       subject: 'MovieHub Password Reset',
       html: `
         <p>You requested a password reset.</p>
-        <p>Click below to reset your password:</p>
+        <p>Click the link below:</p>
         <a href="${resetUrl}">${resetUrl}</a>
         <p>This link expires in 15 minutes.</p>
       `
-    }).catch(err => {
-      console.error('Email send failed:', err.message);
     });
 
   } catch (error) {
     console.error('Forgot password error:', error);
-    if (!res.headersSent) {
-      res.status(500).json({ success: false, message: 'Server error' });
-    }
   }
 };
 
-// ================== RESET PASSWORD ==================
+// ===============================
+// RESET PASSWORD
+// ===============================
 export const resetPassword = async (req, res) => {
   const hashedToken = crypto
     .createHash('sha256')
