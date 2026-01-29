@@ -14,6 +14,11 @@ const ResetPassword = () => {
     setError('');
     setMsg('');
 
+    if (password.length < 6) {
+      setError('Password length must be at least 6 characters');
+      return;
+    }
+
     try {
       const res = await resetPassword(token, password);
       setMsg(res.message);
@@ -36,8 +41,20 @@ const ResetPassword = () => {
           required
           placeholder="Enter new password"
           className="w-full p-3 my-4 bg-black text-white border border-gray-700 rounded"
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            if (e.target.value.length >= 6) {
+              setError('');
+            }
+          }}
         />
+
+        {/* helper message (only when typing short password) */}
+        {password && password.length < 6 && !msg && (
+          <p className="text-yellow-400 text-sm mb-3">
+            Password length must be at least 6 characters
+          </p>
+        )}
 
         <button className="w-full bg-red-600 py-2 rounded text-white">
           Reset Password
