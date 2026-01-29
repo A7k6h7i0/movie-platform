@@ -1,10 +1,7 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
+import nodemailer from 'nodemailer';
 
 // Generate JWT Token
 const generateToken = (userId) => {
@@ -78,108 +75,35 @@ export const getMe = async (req, res) => {
 };
 
 // ===============================
-// ✅ FORGOT PASSWORD (NEW)
+// ✅ FORGOT PASSWORD
 // ===============================
-// ================== EMAIL SETUP ==================
-// const transporter = nodemailer.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS
-//   }
-  
-// });
 
-// ================== FORGOT PASSWORD (EMAIL LINK) ==================
-// export const forgotPassword = async (req, res) => {
-//   try {
-//     const { email } = req.body;
+// ✅ FIXED SMTP TRANSPORT (RENDER SAFE)
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,              // ✅ DO NOT use 465 on Render
+  secure: false,          // ✅ must be false for 587
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000
+});
 
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res.status(404).json({ success: false, message: 'User not found' });
-//     }
-
-//     const resetToken = crypto.randomBytes(32).toString('hex');
-//     const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-
-//     user.resetPasswordToken = hashedToken;
-//     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-//     await user.save();
-
-//     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-
-//     // ✅ RESPOND FIRST (THIS FIXES 502)
-//     res.status(200).json({
-//       success: true,
-//       message: 'Password reset link sent to email'
-//     });
-
-//     // ✅ SEND EMAIL AFTER RESPONSE (NON-BLOCKING)
-//     transporter.sendMail({
-//       to: user.email,
-//       subject: 'MovieHub Password Reset',
-//       html: `
-//         <p>You requested a password reset.</p>
-//         <p>Click below to reset your password:</p>
-//         <a href="${resetUrl}">${resetUrl}</a>
-//         <p>This link expires in 15 minutes.</p>
-//       `
-//     }).catch(err => {
-//       console.error('Email send failed:', err.message);
-//     });
-
-//   } catch (error) {
-//     console.error('Forgot password error:', error);
-//     if (!res.headersSent) {
-//       res.status(500).json({ success: false, message: 'Server error' });
-//     }
-//   }
-// };
-
-
-// // ================== RESET PASSWORD ==================
-// export const resetPassword = async (req, res) => {
-//   const hashedToken = crypto
-//     .createHash('sha256')
-//     .update(req.params.token)
-//     .digest('hex');
-
-//   const user = await User.findOne({
-//     resetPasswordToken: hashedToken,
-//     resetPasswordExpire: { $gt: Date.now() }
-//   });
-
-//   if (!user) {
-//     return res.status(400).json({ success: false, message: 'Invalid or expired token' });
-//   }
-
-//   user.password = req.body.password;
-//   user.resetPasswordToken = undefined;
-//   user.resetPasswordExpire = undefined;
-//   await user.save();
-
-//   res.json({ success: true, message: 'Password reset successful' });
-// };
-
-
+// ================== FORGOT PASSWORD ==================
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
     user.resetPasswordToken = hashedToken;
     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
@@ -187,75 +111,55 @@ export const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-    // ✅ Respond immediately
+    // ✅ Respond first
     res.status(200).json({
       success: true,
       message: 'Password reset link sent to email'
     });
 
-    // ✅ Send email via Resend (RELIABLE)
-    await resend.emails.send({
-      from: 'MovieHub <onboarding@resend.dev>',
+    // ✅ Send email async (non-blocking)
+    transporter.sendMail({
+      from: `"MovieHub" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: 'MovieHub Password Reset',
       html: `
-        <h2>Password Reset</h2>
         <p>You requested a password reset.</p>
-        <p>Click the link below to reset your password:</p>
+        <p>Click below to reset your password:</p>
         <a href="${resetUrl}">${resetUrl}</a>
         <p>This link expires in 15 minutes.</p>
       `
+    }).catch(err => {
+      console.error('Email send failed:', err.message);
     });
 
   } catch (error) {
-    console.error('Forgot password error:', error.message);
+    console.error('Forgot password error:', error);
     if (!res.headersSent) {
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
+      res.status(500).json({ success: false, message: 'Server error' });
     }
   }
 };
 
 // ================== RESET PASSWORD ==================
 export const resetPassword = async (req, res) => {
-  try {
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(req.params.token)
-      .digest('hex');
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
 
-    const user = await User.findOne({
-      resetPasswordToken: hashedToken,
-      resetPasswordExpire: { $gt: Date.now() }
-    });
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
 
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid or expired reset token'
-      });
-    }
-
-    user.password = req.body.password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: 'Password reset successful'
-    });
-
-  } catch (error) {
-    console.error('Reset password error:', error.message);
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
+  if (!user) {
+    return res.status(400).json({ success: false, message: 'Invalid or expired token' });
   }
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  res.json({ success: true, message: 'Password reset successful' });
 };
-
-
