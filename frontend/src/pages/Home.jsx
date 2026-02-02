@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useMovies } from '../hooks/useMovies';
+import { useShuffleContext } from '../context/ShuffleContext';
 import SEO from '../components/seo/SEO';
 import HeroSection from '../components/ui/Hero/HeroSection';
 import MovieCarousel from '../components/ui/MovieCarousel';
@@ -10,6 +10,7 @@ import GenreSection from '../components/ui/GenreSection';
 import MultiGenreSection from '../components/ui/MultiGenreSection';
 import RegionalSection from '../components/ui/RegionalSection';
 import TopTenSection from '../components/ui/TopTenSection';
+import SuggestionsSection from '../components/ui/SuggestionsSection';
 
 const Home = () => {
   const { data: trendingData, isLoading: trendingLoading, error } =
@@ -17,6 +18,15 @@ const Home = () => {
   const { data: popularData, isLoading: popularLoading } = useMovies('popular');
   const { data: upcomingData, isLoading: upcomingLoading } = useMovies('upcoming');
   const { data: topRatedData, isLoading: topRatedLoading } = useMovies('topRated');
+
+  // Shuffle Suggestions via Context
+  const {
+    showSuggestions,
+    suggestedMovie,
+    isLoading: shuffleLoading,
+    error: shuffleError,
+    toggleSuggestions
+  } = useShuffleContext();
 
   if (error) return <ErrorState message={error.message} />;
 
@@ -33,6 +43,15 @@ const Home = () => {
       ) : (
         <HeroSection movies={trendingData?.results?.slice(0, 20)} />
       )}
+
+      {/* SUGGESTIONS SECTION */}
+      <SuggestionsSection
+        show={showSuggestions}
+        movie={suggestedMovie}
+        isLoading={shuffleLoading}
+        error={shuffleError}
+        onToggle={toggleSuggestions}
+      />
 
       {/* OTT */}
       <div className="px-4 md:px-8 lg:px-16 py-2">

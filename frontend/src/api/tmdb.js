@@ -67,9 +67,77 @@ export const fetchPopularMovies = async (page = 1) => {
   return makeProxiedRequest('/movie/popular', { page });
 };
 
-// Fetch top rated movies
+// Fetch top rated movies (filtered for India)
 export const fetchTopRatedMovies = async (page = 1) => {
-  return makeProxiedRequest('/movie/top_rated', { page });
+  return makeProxiedRequest('/movie/top_rated', { 
+    page,
+    region: 'IN',
+    'vote_count.gte': 50
+  });
+};
+
+// Fetch top reviewed movies (sorted by vote_count - most reviewed/popular)
+export const fetchTopReviewedMovies = async (page = 1) => {
+  return makeProxiedRequest('/movie/popular', { 
+    page, 
+    sort_by: 'vote_count.desc',
+    'vote_count.gte': 100, // Minimum 100 votes for relevance
+    region: 'IN'
+  });
+};
+
+// Fetch combined top movie (top rated + top reviewed)
+export const fetchCombinedTopMovie = async () => {
+  try {
+    // Fetch top rated and top reviewed in parallel
+    const [topRatedData, topReviewedData] = await Promise.all([
+      makeProxiedRequest('/movie/top_rated', { 
+        page: 1, 
+        region: 'IN',
+        'vote_count.gte': 100
+      }),
+      makeProxiedRequest('/movie/popular', { 
+        page: 1, 
+        sort_by: 'vote_count.desc',
+        'vote_count.gte': 100,
+        region: 'IN'
+      })
+    ]);
+
+    const topRated = topRatedData.results || [];
+    const topReviewed = topReviewedData.results || [];
+
+    // Combine and score movies
+    const movieScores = new Map();
+    
+    // Score top rated (higher weight)
+    topRated.forEach((movie, index) => {
+      const score = (topRated.length - index) * 2; // Weight: 2x
+      movieScores.set(movie.id, { 
+        movie, 
+        score: (movieScores.get(movie.id)?.score || 0) + score 
+      });
+    });
+    
+    // Score top reviewed
+    topReviewed.forEach((movie, index) => {
+      const score = (topReviewed.length - index); // Weight: 1x
+      movieScores.set(movie.id, { 
+        movie, 
+        score: (movieScores.get(movie.id)?.score || 0) + score 
+      });
+    });
+
+    // Sort by score and return the top movie
+    const sortedMovies = Array.from(movieScores.values())
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.movie);
+
+    return sortedMovies[0] || null;
+  } catch (error) {
+    console.error('Error fetching combined top movie:', error);
+    return null;
+  }
 };
 
 // Fetch upcoming movies

@@ -4,12 +4,22 @@ import { motion } from 'framer-motion';
 import { FiSearch, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
 import MobileMenu from './MobileMenu';
 import { useAuth } from '../../context/AuthContext';
+import ShuffleButton from '../ui/ShuffleButton';
+import { useShuffleContext } from '../../context/ShuffleContext';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  
+  // Use shuffle context
+  const { 
+    showSuggestions, 
+    isLoading: shuffleLoading, 
+    shuffleSuggestions,
+    toggleSuggestions
+  } = useShuffleContext();
 
   const navLinks = [
     { path: '/', label: 'Home' },
@@ -88,19 +98,24 @@ const Navbar = () => {
             </div>
 
             {/* RIGHT SIDE */}
-            <div className="flex items-center space-x-4">
-              {/* SEARCH */}
-              <form onSubmit={handleSearch} className="hidden md:block">
-                <div className="relative">
+            <div className="flex items-center space-x-2 md:space-x-4">
+              {/* SEARCH + SHUFFLE */}
+              <div className="flex items-center space-x-2">
+                <form onSubmit={handleSearch} className="relative">
                   <input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search movies..."
-                    className="bg-white/10 text-white placeholder-gray-400 rounded-full px-4 py-2 pl-10 w-64 focus:outline-none focus:ring-2 focus:ring-primary-accent transition-all"
+                    className="bg-white/10 text-white placeholder-gray-400 rounded-full px-3 py-2 pl-9 w-32 md:w-64 focus:outline-none focus:ring-2 focus:ring-primary-accent transition-all text-sm"
                   />
                   <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                </div>
-              </form>
+                </form>
+                <ShuffleButton
+                  onClick={() => toggleSuggestions(showSuggestions ? 'hide' : 'auto')}
+                  isLoading={shuffleLoading}
+                  showSuggestions={showSuggestions}
+                />
+              </div>
 
               {/* USER */}
               {user ? (
