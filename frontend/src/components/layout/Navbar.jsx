@@ -4,8 +4,6 @@ import { motion } from 'framer-motion';
 import { FiSearch, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
 import MobileMenu from './MobileMenu';
 import { useAuth } from '../../context/AuthContext';
-import ShuffleButton from '../ui/ShuffleButton';
-import { useShuffleContext } from '../../context/ShuffleContext';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,14 +11,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   
-  // Use shuffle context
-  const { 
-    showSuggestions, 
-    isLoading: shuffleLoading, 
-    shuffleSuggestions,
-    toggleSuggestions
-  } = useShuffleContext();
-
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/trending', label: 'Trending' },
@@ -99,7 +89,7 @@ const Navbar = () => {
 
             {/* RIGHT SIDE */}
             <div className="flex items-center space-x-2 md:space-x-4">
-              {/* SEARCH + SHUFFLE */}
+              {/* SEARCH */}
               <div className="flex items-center space-x-2">
                 <form onSubmit={handleSearch} className="relative">
                   <input
@@ -110,11 +100,6 @@ const Navbar = () => {
                   />
                   <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 </form>
-                <ShuffleButton
-                  onClick={() => toggleSuggestions(showSuggestions ? 'hide' : 'auto')}
-                  isLoading={shuffleLoading}
-                  showSuggestions={showSuggestions}
-                />
               </div>
 
               {/* USER */}

@@ -1,17 +1,32 @@
+import { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { getBackdropUrl } from '../../utils/imageHelper';
-import { getYear } from '../../utils/dateFormatter';
-import RatingBadge from './RatingBadge';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import MovieCard from './MovieCard';
+import SkeletonLoader from './SkeletonLoader';
 
 const SuggestionsSection = ({ 
   show, 
-  movie, 
+  movies, 
   isLoading, 
   error,
   onToggle 
 }) => {
+  const scrollRef = useRef(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    setIsInView(true);
+  }, []);
+
+  const scroll = (direction) => {
+    const container = scrollRef.current;
+    if (container) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
   if (!show && !isLoading) return null;
 
   return (
@@ -24,106 +39,107 @@ const SuggestionsSection = ({
           transition={{ duration: 0.4, ease: 'easeInOut' }}
           className="overflow-hidden"
         >
-          <div className="px-4 md:px-8 lg:px-16 py-6">
-            {/* Header with Reshuffle Button */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-white">
-                Top Pick for You
-              </h2>
-              <button
-                onClick={() => onToggle('reshuffle')}
-                disabled={isLoading}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg
-                  className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-                <span className="hidden sm:inline">
-                  {isLoading ? 'Finding...' : 'Reshuffle'}
-                </span>
-              </button>
+          <div className="px-4 md:px-10 lg:px-16">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 pt-4">
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl md:text-2xl font-bold text-white">
+                  Top Pick for You
+                </h2>
+                {movies.length > 0 && (
+                  <span className="text-sm text-gray-400">
+                    ({movies.length})
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {movies.length > 6 && (
+                  <button
+                    onClick={() => onToggle('reshuffle')}
+                    disabled={isLoading}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-full font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg
+                      className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                    <span className="hidden xs:inline">
+                      {isLoading ? '...' : 'Reshuffle'}
+                    </span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Error State */}
             {error && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                <p className="text-red-400">{error}</p>
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                <p className="text-red-400 text-sm">{error}</p>
               </div>
             )}
 
             {/* Loading State */}
             {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-accent"></div>
-              </div>
-            ) : movie ? (
-              /* Single Movie Display */
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="relative rounded-2xl overflow-hidden bg-gray-900"
-              >
-                {/* Backdrop Image */}
-                <div className="relative h-[300px] md:h-[400px] lg:h-[500px]">
-                  <img
-                    src={getBackdropUrl(movie.backdrop_path)}
-                    alt={movie.title || movie.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                  
-                  {/* Movie Details */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                    <div className="max-w-2xl">
-                      {/* Title */}
-                      <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
-                        {movie.title || movie.name}
-                      </h3>
-                      
-                      {/* Meta Info */}
-                      <div className="flex flex-wrap items-center gap-4 mb-4 text-gray-300">
-                        <span className="flex items-center gap-1">
-                          <RatingBadge rating={movie.vote_average} />
-                        </span>
-                        <span>{getYear(movie.release_date || movie.first_air_date)}</span>
-                        {movie.original_language && (
-                          <span className="uppercase">{movie.original_language}</span>
-                        )}
-                      </div>
-                      
-                      {/* Overview */}
-                      <p className="text-gray-300 text-sm md:text-base line-clamp-3 mb-4">
-                        {movie.overview || 'No description available.'}
-                      </p>
-                      
-                      {/* Action Buttons */}
-                      <div className="flex flex-wrap gap-3">
-                        <Link
-                          to={`/movie/${movie.id}/${(movie.title || movie.name).toLowerCase().replace(/\s+/g, '-')}`}
-                          className="px-6 py-3 bg-primary-accent hover:bg-red-700 text-white rounded-full font-semibold transition-colors"
-                        >
-                          View Details
-                        </Link>
-                      </div>
-                    </div>
+              <div className="flex gap-3 overflow-hidden pb-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={`skeleton-${i}`} className="flex-none w-[140px] md:w-[180px]">
+                    <SkeletonLoader type="card" />
                   </div>
+                ))}
+              </div>
+            ) : movies && movies.length > 0 ? (
+              /* Movies Carousel - Same as other sections */
+              <motion.div
+                className="relative group mb-8"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+              >
+                {/* Scroll Buttons */}
+                <button
+                  onClick={() => scroll('left')}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black text-white p-2 md:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 hidden md:block"
+                >
+                  <FiChevronLeft size={20} />
+                </button>
+                <button
+                  onClick={() => scroll('right')}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black text-white p-2 md:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 hidden md:block"
+                >
+                  <FiChevronRight size={20} />
+                </button>
+
+                {/* Movies Row */}
+                <div
+                  ref={scrollRef}
+                  className="flex gap-3 overflow-x-auto scroll-smooth hide-scrollbar touch-pan-x pb-4"
+                  style={{ WebkitOverflowScrolling: 'touch' }}
+                >
+                  {movies.map((movie, index) => (
+                    <motion.div
+                      key={movie.id}
+                      className="flex-none w-[140px] md:w-[180px]"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, delay: Math.min(index * 0.03, 0.3) }}
+                    >
+                      <MovieCard movie={movie} />
+                    </motion.div>
+                  ))}
                 </div>
               </motion.div>
             ) : (
-              <div className="text-center py-12 text-gray-400">
-                <p>Click shuffle to get a movie recommendation!</p>
+              <div className="text-center py-8 text-gray-400">
+                <p>Click shuffle to get movie recommendations!</p>
               </div>
             )}
           </div>
@@ -135,14 +151,14 @@ const SuggestionsSection = ({
 
 SuggestionsSection.propTypes = {
   show: PropTypes.bool.isRequired,
-  movie: PropTypes.object,
+  movies: PropTypes.array,
   isLoading: PropTypes.bool,
   error: PropTypes.string,
   onToggle: PropTypes.func.isRequired
 };
 
 SuggestionsSection.defaultProps = {
-  movie: null,
+  movies: [],
   isLoading: false,
   error: null
 };

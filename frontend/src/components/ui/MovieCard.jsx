@@ -1,6 +1,7 @@
-import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getPosterUrl } from '../../utils/imageHelper';
 import { getYear } from '../../utils/dateFormatter';
@@ -18,7 +19,15 @@ const MovieCard = ({ movie, size = 'default', showTrailerOnHover = false }) => {
   const cardRef = useRef(null);
   const hoverTimeoutRef = useRef(null);
   const closeTimeoutRef = useRef(null);
+  const longPressTimeoutRef = useRef(null);
   const isMobile = useIsMobile(768);
+
+  // Generate slug for URL
+  const movieSlug = (movie.title || movie.name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+  const movieUrl = `/movie/${movie.id}/${movieSlug}`;
 
   /* ---------------------------------- */
   /* CLEANUP */
@@ -27,11 +36,12 @@ const MovieCard = ({ movie, size = 'default', showTrailerOnHover = false }) => {
     return () => {
       clearTimeout(hoverTimeoutRef.current);
       clearTimeout(closeTimeoutRef.current);
+      clearTimeout(longPressTimeoutRef.current);
     };
   }, []);
 
   /* ---------------------------------- */
-  /* HOVER */
+  /* HOVER (Desktop) */
   /* ---------------------------------- */
   const handleMouseEnter = useCallback(async () => {
     if (isMobile) return;
@@ -58,75 +68,114 @@ const MovieCard = ({ movie, size = 'default', showTrailerOnHover = false }) => {
     }, 250);
   }, []);
 
+  /* ---------------------------------- */
+  /* LONG PRESS (Mobile) */
+  /* ---------------------------------- */
+  const handleTouchStart = useCallback(async () => {
+    if (!isMobile) return;
+
+    clearTimeout(longPressTimeoutRef.current);
+
+    if (showTrailerOnHover && !movieDetails) {
+      try {
+        const details = await fetchMovieDetail(movie.id);
+        setMovieDetails(details);
+      } catch {}
+    }
+
+    // Long press after 500ms to show preview
+    longPressTimeoutRef.current = setTimeout(() => {
+      showTrailerOnHover ? setShowTrailer(true) : setShowPreview(true);
+    }, 500);
+  }, [isMobile, showTrailerOnHover, movieDetails, movie.id]);
+
+  const handleTouchEnd = useCallback(() => {
+    clearTimeout(longPressTimeoutRef.current);
+    // Close preview after delay
+    closeTimeoutRef.current = setTimeout(() => {
+      setShowPreview(false);
+      setShowTrailer(false);
+    }, 1000);
+  }, []);
+
   return (
     <>
-      <motion.div
-        ref={cardRef}
-        className="relative group cursor-pointer"
-        whileTap={{ scale: 0.97 }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <div
-          className={`relative ${
-            size === 'large' ? 'aspect-video' : 'aspect-[2/3]'
-          } rounded-lg overflow-hidden bg-gray-800`}
+      <Link to={movieUrl} className="block">
+        <motion.div
+          ref={cardRef}
+          className="relative group cursor-pointer"
+          whileTap={{ scale: 0.97 }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
         >
-          <img
-            src={
-              size === 'large'
-                ? `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
-                : getPosterUrl(movie.poster_path)
-            }
-            alt={movie.title || movie.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
+          <div
+            className={`relative ${
+              size === 'large' ? 'aspect-video' : 'aspect-[2/3]'
+            } rounded-lg overflow-hidden bg-gray-800`}
+          >
+            <img
+              src={
+                size === 'large'
+                  ? `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
+                  : getPosterUrl(movie.poster_path)
+              }
+              alt={movie.title || movie.name}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+            />
 
-          {!showTrailer && (
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="absolute bottom-0 p-4">
-                <h3 className="text-white font-bold text-lg line-clamp-2">
-                  {movie.title || movie.name}
-                </h3>
-                <p className="text-gray-300 text-sm">
-                  {getYear(movie.release_date || movie.first_air_date)}
-                </p>
+            {!showTrailer && (
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute bottom-0 p-4">
+                  <h3 className="text-white font-bold text-lg line-clamp-2">
+                    {movie.title || movie.name}
+                  </h3>
+                  <p className="text-gray-300 text-sm">
+                    {getYear(movie.release_date || movie.first_air_date)}
+                  </p>
+                </div>
               </div>
+            )}
+
+            <div className="absolute top-2 right-2 z-20">
+              <RatingBadge rating={movie.vote_average} />
             </div>
-          )}
-
-          <div className="absolute top-2 right-2 z-20">
-            <RatingBadge rating={movie.vote_average} />
           </div>
-        </div>
 
-        <div className="mt-3 px-1">
-          <h3 className="text-white font-semibold text-sm line-clamp-1">
-            {movie.title || movie.name}
-          </h3>
-          <div className="flex justify-between text-xs mt-1">
-            <span className="text-gray-400">
-              {getYear(movie.release_date || movie.first_air_date)}
-            </span>
-            <span className="text-primary-secondary font-semibold">
-              ⭐ {formatRating(movie.vote_average)}
-            </span>
+          <div className="mt-3 px-1">
+            <h3 className="text-white font-semibold text-sm line-clamp-1">
+              {movie.title || movie.name}
+            </h3>
+            <div className="flex justify-between text-xs mt-1">
+              <span className="text-gray-400">
+                {getYear(movie.release_date || movie.first_air_date)}
+              </span>
+              <span className="text-primary-secondary font-semibold">
+                ⭐ {formatRating(movie.vote_average)}
+              </span>
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </Link>
 
-      {/* HOVER PREVIEW */}
-      {showPreview && !isMobile &&
+      {/* HOVER PREVIEW - Works on both desktop (hover) and mobile (long-press) */}
+      {showPreview && (
         createPortal(
           <HoverPreview
             movie={movie}
             cardRef={cardRef}
             onMouseEnter={() => clearTimeout(closeTimeoutRef.current)}
-            onMouseLeave={() => setShowPreview(false)}
+            onMouseLeave={() => {
+              setShowPreview(false);
+              setShowTrailer(false);
+            }}
           />,
           document.body
-        )}
+        )
+      )}
     </>
   );
 };

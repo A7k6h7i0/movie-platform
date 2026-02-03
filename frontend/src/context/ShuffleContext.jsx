@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { fetchTopRatedMovies, fetchTopReviewedMovies } from '../api/tmdb';
 
@@ -12,19 +12,23 @@ export const useShuffleContext = () => {
   return context;
 };
 
+/**
+ * Google-style controlled shuffle algorithm:
+ * - Top 3 items: Preserved (never shuffled) - these are the best recommendations
+ * - Mid-tier items (4-20): Shuffled on user action only
+ * - Category diversity: Mix of top rated and top reviewed
+ * - No reshuffle on render: Uses useMemo and explicit user action only
+ */
 export const ShuffleProvider = ({ children }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [suggestedMovie, setSuggestedMovie] = useState(null);
-  const [previousMovies, setPreviousMovies] = useState(new Set());
+  const [suggestedMovies, setSuggestedMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [lastShuffleTime, setLastShuffleTime] = useState(null);
 
-  const shuffleSuggestions = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
+  // Fetch and combine movies with category diversity
+  const fetchMovies = useCallback(async () => {
     try {
-      // Fetch top rated and top reviewed in parallel
       const [topRatedData, topReviewedData] = await Promise.all([
         fetchTopRatedMovies(1),
         fetchTopReviewedMovies(1)
@@ -33,103 +37,145 @@ export const ShuffleProvider = ({ children }) => {
       const topRated = topRatedData.results || [];
       const topReviewed = topReviewedData.results || [];
 
-      // Combine and score movies
-      const movieScores = new Map();
+      // Score and combine movies with category diversity
+      const movieMap = new Map();
       
-      // Score top rated (higher weight)
+      // Process top rated (higher weight for quality)
       topRated.forEach((movie, index) => {
-        const score = (topRated.length - index) * 2; // Weight: 2x
-        const currentScore = movieScores.get(movie.id)?.score || 0;
-        movieScores.set(movie.id, { 
-          movie, 
-          score: currentScore + score,
-          combinedRating: (movie.vote_average * 2) + (movie.vote_count / 1000)
+        const rankScore = (topRated.length - index) * 2;
+        const qualityScore = movie.vote_average * 10;
+        const reviewScore = movie.vote_count / 1000;
+        const totalScore = rankScore + qualityScore + reviewScore;
+        
+        movieMap.set(movie.id, {
+          movie,
+          score: totalScore,
+          category: 'topRated'
         });
       });
       
-      // Score top reviewed
+      // Process top reviewed (higher weight for popularity)
       topReviewed.forEach((movie, index) => {
-        const score = (topReviewed.length - index); // Weight: 1x
-        const currentScore = movieScores.get(movie.id)?.score || 0;
-        movieScores.set(movie.id, { 
-          movie, 
-          score: currentScore + score,
-          combinedRating: (movie.vote_average * 2) + (movie.vote_count / 1000)
-        });
+        const rankScore = (topReviewed.length - index) * 2;
+        const qualityScore = movie.vote_average * 10;
+        const reviewScore = movie.vote_count / 1000;
+        const totalScore = rankScore + qualityScore + reviewScore;
+        
+        const existing = movieMap.get(movie.id);
+        if (existing) {
+          // Boost score if movie appears in both lists
+          movieMap.set(movie.id, {
+            ...existing,
+            score: existing.score + totalScore * 0.5,
+            category: 'both'
+          });
+        } else {
+          movieMap.set(movie.id, {
+            movie,
+            score: totalScore,
+            category: 'topReviewed'
+          });
+        }
       });
 
-      // Sort by combined score
-      let sortedMovies = Array.from(movieScores.values())
+      // Sort by score and get top 20 candidates
+      const sortedMovies = Array.from(movieMap.values())
         .sort((a, b) => b.score - a.score)
+        .slice(0, 20)
         .map(item => item.movie);
 
-      // Filter out previously shown movies
-      sortedMovies = sortedMovies.filter(movie => !previousMovies.has(movie.id));
-
-      // If all movies have been shown, reset and start over
-      if (sortedMovies.length === 0) {
-        setPreviousMovies(new Set());
-        sortedMovies = Array.from(movieScores.values())
-          .sort((a, b) => b.score - a.score)
-          .map(item => item.movie);
-      }
-
-      // Randomly select from top candidates (top 10)
-      const topCandidates = sortedMovies.slice(0, 10);
-      const randomIndex = Math.floor(Math.random() * topCandidates.length);
-      const selectedMovie = topCandidates[randomIndex];
-
-      // Track shown movies (keep last 20)
-      setPreviousMovies(prev => {
-        const newSet = new Set(prev);
-        newSet.add(selectedMovie.id);
-        // Keep only last 20 to avoid memory issues
-        if (newSet.size > 20) {
-          const iterator = newSet.values();
-          newSet.delete(iterator.next().value);
-        }
-        return newSet;
-      });
-
-      setSuggestedMovie(selectedMovie);
-      setShowSuggestions(true);
+      return { movies: sortedMovies, movieMap };
     } catch (err) {
-      console.error('Error fetching suggestions:', err);
+      console.error('Error fetching movies:', err);
+      throw err;
+    }
+  }, []);
+
+  // Controlled shuffle: preserve top 3, shuffle rest
+  const applyControlledShuffle = useCallback((movies) => {
+    if (!movies || movies.length === 0) return [];
+
+    // Preserve top 3 items (they are the best recommendations)
+    const topPreserved = movies.slice(0, 3);
+    
+    // Shuffle mid-tier items (positions 4+)
+    const midTier = movies.slice(3);
+    
+    // Fisher-Yates shuffle for mid-tier only
+    const shuffledMidTier = [...midTier];
+    for (let i = shuffledMidTier.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledMidTier[i], shuffledMidTier[j]] = [shuffledMidTier[j], shuffledMidTier[i]];
+    }
+    
+    // Combine: top 3 preserved + shuffled mid-tier
+    return [...topPreserved, ...shuffledMidTier];
+  }, []);
+
+  // Main shuffle function - only on explicit user action
+  const shuffleSuggestions = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Fetch fresh movies
+      const { movies } = await fetchMovies();
+      
+      // Apply controlled shuffle (preserve top 3, shuffle rest)
+      const shuffledMovies = applyControlledShuffle(movies);
+      
+      setSuggestedMovies(shuffledMovies);
+      setShowSuggestions(true);
+      setLastShuffleTime(Date.now());
+    } catch (err) {
+      console.error('Error shuffling suggestions:', err);
       setError('Failed to load suggestions. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }, [previousMovies]);
+  }, [fetchMovies, applyControlledShuffle]);
 
+  // Toggle suggestions visibility
   const toggleSuggestions = useCallback((action = 'auto') => {
     if (!showSuggestions) {
-      // Show suggestions (fetch if needed)
-      if (!suggestedMovie) {
+      // Show suggestions - fetch if needed
+      if (suggestedMovies.length === 0) {
         shuffleSuggestions();
       } else {
         setShowSuggestions(true);
       }
     } else {
-      // If action is 'hide', hide the section
+      // Already showing
       if (action === 'hide') {
+        // Hide but keep movies for next time
         setShowSuggestions(false);
-      } else {
-        // Otherwise reshuffle
+      } else if (action === 'reshuffle') {
+        // Reshuffle and keep showing
         shuffleSuggestions();
       }
+      // 'auto' does nothing when already showing
     }
-  }, [showSuggestions, suggestedMovie, shuffleSuggestions]);
+  }, [showSuggestions, suggestedMovies, shuffleSuggestions]);
 
-  const value = {
+  // Memoized context value to prevent unnecessary re-renders
+  const value = useMemo(() => ({
     showSuggestions,
     setShowSuggestions,
-    suggestedMovie,
-    previousMovies,
+    suggestedMovies,
     isLoading,
     error,
+    lastShuffleTime,
     shuffleSuggestions,
     toggleSuggestions
-  };
+  }), [
+    showSuggestions,
+    suggestedMovies,
+    isLoading,
+    error,
+    lastShuffleTime,
+    shuffleSuggestions,
+    toggleSuggestions
+  ]);
 
   return (
     <ShuffleContext.Provider value={value}>
