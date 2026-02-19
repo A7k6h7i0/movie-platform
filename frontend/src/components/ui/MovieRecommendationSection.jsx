@@ -64,17 +64,20 @@ const MovieRecommendationSection = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-gray-950 via-purple-950/20 to-gray-950 overflow-hidden">
+    <section className="relative bg-gradient-to-br from-slate-950 via-purple-950/30 to-indigo-950 overflow-hidden">
       {/* Background effects - More highlighted */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/30 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-pink-600/20 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-pink-600/15 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-1/3 w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-violet-600/10 rounded-full blur-[150px]" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-60" />
+        {/* Animated subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-purple-950/30 via-transparent to-pink-950/20" />
       </div>
 
       {/* Animated border glow */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-purple-500/20 animate-pulse" style={{ clipPath: 'inset(0 0 100% 0)' }} />
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 animate-pulse" style={{ clipPath: 'inset(0 0 100% 0)' }} />
 
       <div className="relative z-10 px-4 md:px-8 lg:px-16 py-16 md:py-20">
         {/* Header - More highlighted */}

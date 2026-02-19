@@ -173,15 +173,6 @@ export const OTT_PLATFORMS = {
     logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjyn1Rz92RlLB7HW8Z5XRtwVn6gFCU26aFlA&s',
     category: 'telugu'
   },
-  // iBOMMA
-  601: { 
-    name: 'iBOMMA', 
-    logo: '🎥', 
-    color: '#4CAF50', 
-    url: 'https://www.ibomma.com',
-    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz16P33MdtxjUVSFbyGR3qk5BylV9o4SvF1g&s',
-    category: 'telugu'
-  },
   // Neestream
   602: { 
     name: 'Neestream', 
@@ -526,7 +517,6 @@ export const getOTTPlatformUrl = (providerId, providerName, movieTitle = null) =
     'aha': 'https://www.aha.video',
     'aha gold': 'https://www.aha.video',
     'etv win': 'https://www.etvwin.com',
-    'ibomma': 'https://www.ibomma.com',
     'neestream': 'https://www.neestream.com',
     'first shows': 'https://www.firstshows.com',
     'chitram tv ott': 'https://www.chitramtv.com',
